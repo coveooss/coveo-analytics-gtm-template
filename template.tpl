@@ -788,7 +788,7 @@ const loadCoveoAnalyticsScript = () => {
   });
   
   const url = "https://static.cloud.coveo.com/coveo.analytics.js/" + conf.scriptVersion + "/coveoua.js";
-  injectScript(url, () => { log('Coveo Analytics Script Loaded'); }, conf.gtmOnFailure, url);
+  injectScript(url, () => { log('Coveo Analytics Script Loaded'); }, data.gtmOnFailure, url);
 };
   
 const loadCoveoAnalyticsScriptIfNotLoaded = () => {
