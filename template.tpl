@@ -472,7 +472,7 @@ ___TEMPLATE_PARAMETERS___
             "displayValue": "Coveo Cloud"
           },
           {
-            "value": "http://usageanalyticshipaa.cloud.coveo.com/",
+            "value": "https://usageanalyticshipaa.cloud.coveo.com/",
             "displayValue": "Coveo Cloud (HIPAA)"
           }
         ],
@@ -497,7 +497,8 @@ ___TEMPLATE_PARAMETERS___
                 "paramValue": "",
                 "type": "PRESENT"
               }
-            ]
+            ],
+            "errorMessage": "You must use the format \"MAJOR.MINOR\". Ex: 1.0"
           }
         ],
         "valueHint": "1.0"
@@ -973,4 +974,4 @@ data.gtmOnSuccess();
 
 ___NOTES___
 
-Created on 8/6/2019, 10:17:33 AM
+Created on 8/6/2019, 10:21:30 AM
