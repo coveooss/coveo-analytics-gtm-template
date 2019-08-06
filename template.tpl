@@ -796,11 +796,10 @@ const loadCoveoAnalyticsScriptIfNotLoaded = () => {
   const coveoanalytics = copyFromWindow("coveoanalytics");
   
   if (!coveoanalytics) {
-    if (validateVariablesToLoadScript()) {
-      return loadCoveoAnalyticsScript();
-    } else {
-      return false;
+    if (!validateVariablesToLoadScript()) {
+      return false; 
     }
+    loadCoveoAnalyticsScript();
   }
   return true;
 };
