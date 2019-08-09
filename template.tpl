@@ -443,25 +443,65 @@ ___TEMPLATE_PARAMETERS___
     "type": "GROUP",
     "subParams": [
       {
-        "notSetText": "Not Set",
-        "macrosInSelect": true,
-        "selectItems": [],
+        "type": "TEXT",
+        "name": "apiKey",
+        "displayName": "Coveo Analytics API Key",
+        "simpleValueType": true,
+        "help": "For more information on how to create an API key in Coveo Cloud, follow the link here:  <a href=\"https://docs.coveo.com/en/1718/cloud-v2-administrators/manage-api-keys#add-an-api-key\">Coveo Cloud - Manage API Keys - Add an API key</a>",
         "valueValidators": [
           {
+            "type": "NON_EMPTY",
             "enablingConditions": [
               {
                 "paramName": "eventType",
-                "type": "EQUALS",
-                "paramValue": "load"
+                "paramValue": "load",
+                "type": "EQUALS"
               }
-            ],
-            "type": "NON_EMPTY"
+            ]
+          }
+        ]
+      },
+      {
+        "type": "SELECT",
+        "name": "analyticsEndpoint",
+        "displayName": "Analytics Endpoint URL",
+        "macrosInSelect": true,
+        "selectItems": [
+          {
+            "value": "https://usageanalytics.coveo.com/",
+            "displayValue": "Coveo Cloud"
+          },
+          {
+            "value": "https://usageanalyticshipaa.cloud.coveo.com/",
+            "displayValue": "Coveo Cloud (HIPAA)"
           }
         ],
-        "displayName": "",
         "simpleValueType": true,
-        "name": "configuration",
-        "type": "SELECT"
+        "valueValidators": []
+      },
+      {
+        "type": "TEXT",
+        "name": "scriptVersion",
+        "displayName": "Script Version",
+        "simpleValueType": true,
+        "help": "The version of the script to load",
+        "valueValidators": [
+          {
+            "type": "REGEX",
+            "args": [
+              "\\d\\.\\d"
+            ],
+            "enablingConditions": [
+              {
+                "paramName": "scriptVersion",
+                "paramValue": "",
+                "type": "PRESENT"
+              }
+            ],
+            "errorMessage": "You must use the format \"MAJOR.MINOR\". Ex: 1.0"
+          }
+        ],
+        "valueHint": "1.0"
       }
     ]
   }
@@ -752,20 +792,15 @@ const isLoadEventType = () => data.eventType === "load";
 
 const validateVariablesToLoadScript = () => {
   const COMMON_ERROR_MESSAGE = "Coveo Analytics Script could not be initialized.\n";
-  if (!data.configuration) {
-    if (isLoadEventType()) {
-      log(COMMON_ERROR_MESSAGE + "You must provide the \"Configuration\" variable.");
-    } else {
-      log(COMMON_ERROR_MESSAGE + "You must either provide the \"Configuration\" variable to the first analytics tag or add the \"Load\" event type before this tag.");
-    }
-   	return false;
-  }
 
-  const configuration = data.configuration;
-  const missingKeys = ['apiKey', 'analyticsEndpoint', 'scriptVersion'].filter(key => !configuration[key]);
+  const missingKeys = ['analyticsEndpoint', 'scriptVersion'].filter(key => !data[key]);
   const hasMissingKeys = missingKeys.length > 0;
   if (missingKeys.length > 0) {
-    log(COMMON_ERROR_MESSAGE + "The \"Configuration\" variant object is missing the following keys: " + missingKeys.join(", "));
+    if (isLoadEventType()) {
+      log(COMMON_ERROR_MESSAGE + "The \"Configuration\" section is missing the following keys: " + missingKeys.join(", "));
+    } else {
+      log(COMMON_ERROR_MESSAGE + "You must either provide the variables in the \"Configuration\" section to the first Coveo Analytics tag or add the \"Load\" event type before this tag.");
+    }
     return false;
   }
   
@@ -781,13 +816,13 @@ const loadCoveoAnalyticsScript = () => {
   const getTimestamp = require('getTimestamp');
   setInWindow('coveoua.t', getTimestamp(), true);
   
-  const conf = data.configuration;
-  coveoua("init", conf.apiKey, conf.analyticsEndpoint);
+  coveoua("init", data.apiKey, data.analyticsEndpoint);
   coveoua("onLoad", function() {
     log('Coveo Analytics Initialized');
   });
   
-  const url = "https://static.cloud.coveo.com/coveo.analytics.js/" + conf.scriptVersion + "/coveoua.js";
+  const scriptVersion = data.scriptVersion || "1.0";
+  const url = "https://static.cloud.coveo.com/coveo.analytics.js/" + scriptVersion + "/coveoua.js";
   injectScript(url, () => { log('Coveo Analytics Script Loaded'); }, data.gtmOnFailure, url);
 };
   
@@ -814,7 +849,6 @@ if (successful) {
   data.gtmOnFailure();
   return;
 }
-
 
 const addToObject = function(obj) {
   for (let index in arguments) {
@@ -940,4 +974,4 @@ data.gtmOnSuccess();
 
 ___NOTES___
 
-Created on 8/6/2019, 9:55:16 AM
+Created on 8/6/2019, 10:21:30 AM
