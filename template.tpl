@@ -443,64 +443,64 @@ ___TEMPLATE_PARAMETERS___
     "type": "GROUP",
     "subParams": [
       {
-        "type": "TEXT",
-        "name": "apiKey",
-        "displayName": "Coveo Analytics API Key",
-        "simpleValueType": true,
         "help": "For more information on how to create an API key in Coveo Cloud, follow the link here:  <a href=\"https://docs.coveo.com/en/1718/cloud-v2-administrators/manage-api-keys#add-an-api-key\">Coveo Cloud - Manage API Keys - Add an API key</a>",
         "valueValidators": [
           {
-            "type": "NON_EMPTY",
             "enablingConditions": [
               {
                 "paramName": "eventType",
-                "paramValue": "load",
-                "type": "EQUALS"
+                "type": "EQUALS",
+                "paramValue": "load"
               }
-            ]
+            ],
+            "type": "NON_EMPTY"
           }
-        ]
+        ],
+        "displayName": "Coveo Analytics API Key",
+        "simpleValueType": true,
+        "name": "apiKey",
+        "type": "TEXT"
       },
       {
-        "type": "SELECT",
-        "name": "analyticsEndpoint",
-        "displayName": "Analytics Endpoint URL",
         "macrosInSelect": true,
         "selectItems": [
           {
-            "value": "https://usageanalytics.coveo.com/",
-            "displayValue": "Coveo Cloud"
+            "displayValue": "Coveo Cloud",
+            "value": "https://usageanalytics.coveo.com/"
           },
           {
-            "value": "https://usageanalyticshipaa.cloud.coveo.com/",
-            "displayValue": "Coveo Cloud (HIPAA)"
+            "displayValue": "Coveo Cloud (HIPAA)",
+            "value": "http://usageanalyticshipaa.cloud.coveo.com/"
           }
         ],
+        "valueValidators": [],
+        "displayName": "Analytics Endpoint URL",
         "simpleValueType": true,
-        "valueValidators": []
+        "name": "analyticsEndpoint",
+        "type": "SELECT"
       },
       {
-        "type": "TEXT",
-        "name": "scriptVersion",
-        "displayName": "Script Version",
-        "simpleValueType": true,
         "help": "The version of the script to load",
         "valueValidators": [
           {
-            "type": "REGEX",
             "args": [
               "\\d\\.\\d"
             ],
             "enablingConditions": [
               {
                 "paramName": "scriptVersion",
-                "paramValue": "",
-                "type": "PRESENT"
+                "type": "PRESENT",
+                "paramValue": ""
               }
             ],
-            "errorMessage": "You must use the format \"MAJOR.MINOR\". Ex: 1.0"
+            "errorMessage": "You must use the format \"MAJOR.MINOR\". Ex: 1.0",
+            "type": "REGEX"
           }
         ],
+        "displayName": "Script Version",
+        "simpleValueType": true,
+        "name": "scriptVersion",
+        "type": "TEXT",
         "valueHint": "1.0"
       }
     ]
@@ -793,7 +793,7 @@ const isLoadEventType = () => data.eventType === "load";
 const validateVariablesToLoadScript = () => {
   const COMMON_ERROR_MESSAGE = "Coveo Analytics Script could not be initialized.\n";
 
-  const missingKeys = ['analyticsEndpoint', 'scriptVersion'].filter(key => !data[key]);
+  const missingKeys = ['analyticsEndpoint', 'apiKey'].filter(key => !data[key]);
   const hasMissingKeys = missingKeys.length > 0;
   if (missingKeys.length > 0) {
     if (isLoadEventType()) {
@@ -807,7 +807,7 @@ const validateVariablesToLoadScript = () => {
   return true;
 };
 
-const loadCoveoAnalyticsScript = () => {
+const loadCoveoAnalyticsScript = (onSuccess) => {
   const injectScript = require("injectScript");
   const setInWindow = require("setInWindow");
   
@@ -823,32 +823,22 @@ const loadCoveoAnalyticsScript = () => {
   
   const scriptVersion = data.scriptVersion || "1.0";
   const url = "https://static.cloud.coveo.com/coveo.analytics.js/" + scriptVersion + "/coveoua.js";
-  injectScript(url, () => { log('Coveo Analytics Script Loaded'); }, data.gtmOnFailure, url);
+  injectScript(url, onSuccess, data.gtmOnFailure, url);
 };
   
-const loadCoveoAnalyticsScriptIfNotLoaded = () => {
+const loadCoveoAnalyticsScriptIfNotLoaded = (onSuccess, onFailure) => {
   const copyFromWindow = require("copyFromWindow");
   const coveoanalytics = copyFromWindow("coveoanalytics");
   
   if (!coveoanalytics) {
     if (!validateVariablesToLoadScript()) {
-      return false; 
+      onFailure();
     }
-    loadCoveoAnalyticsScript();
+    loadCoveoAnalyticsScript(onSuccess);
+  } else {
+    onSuccess();
   }
-  return true;
 };
-
-const successful = loadCoveoAnalyticsScriptIfNotLoaded();
-if (successful) {
-  if (isLoadEventType()) {
-    data.gtmOnSuccess();
-    return;
-  }
-} else {
-  data.gtmOnFailure();
-  return;
-}
 
 const addToObject = function(obj) {
   for (let index in arguments) {
@@ -945,33 +935,42 @@ const eventDataForTypeMap = {
   }
 };
 
-const eventDataForType = eventDataForTypeMap[data.eventType];
-addToObject(eventDataForType.customData, generateCustomData());
+const logCoveoAnalyticsEvent = () => {
+  const eventDataForType = eventDataForTypeMap[data.eventType];
+  addToObject(eventDataForType.customData, generateCustomData());
 
-const getUrl = require("getUrl");
-const getReferrerUrl = require("getReferrerUrl");
-const readTitle = require("readTitle");
-const eventData = {
-  location: data.location || getUrl(),
-  referrer: data.referrer || getReferrerUrl(),
-  language: data.language,
-  title: data.title || readTitle(),
-  anonymous: data.isAnonymous,
-  username: data.username,
-  userDisplayName: data.userDisplayName
+  const getUrl = require("getUrl");
+  const getReferrerUrl = require("getReferrerUrl");
+  const readTitle = require("readTitle");
+  const eventData = {
+    location: data.location || getUrl(),
+    referrer: data.referrer || getReferrerUrl(),
+    language: data.language,
+    title: data.title || readTitle(),
+    anonymous: data.isAnonymous,
+    username: data.username,
+    userDisplayName: data.userDisplayName
+  };
+
+  addToObject(eventData, eventDataForType);
+
+  log('Coveo Analytics Data =', eventData);
+
+  const createArgumentsQueue = require('createArgumentsQueue');
+  const coveoua = createArgumentsQueue('coveoua', 'coveoua.q');
+  coveoua("send", eventTypeMap[data.eventType], eventData);
 };
 
-addToObject(eventData, eventDataForType);
-
-log('Coveo Analytics Data =', eventData);
-
-const createArgumentsQueue = require('createArgumentsQueue');
-const coveoua = createArgumentsQueue('coveoua', 'coveoua.q');
-coveoua("send", eventTypeMap[data.eventType], eventData);
-
-data.gtmOnSuccess();
+loadCoveoAnalyticsScriptIfNotLoaded(() => {
+  if (!isLoadEventType()) {
+     logCoveoAnalyticsEvent();
+  }
+  data.gtmOnSuccess();
+}, () => {
+  data.gtmOnFailure();
+});
 
 
 ___NOTES___
 
-Created on 8/6/2019, 10:21:30 AM
+Created on 8/12/2019, 9:01:58 AM
