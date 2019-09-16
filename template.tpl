@@ -2,7 +2,7 @@ ___INFO___
 
 {
   "displayName": "Coveo Analytics",
-  "description": "The Coveo Analytics template allows logging analytics event in Coveo Cloud",
+  "description": "The Coveo Analytics template allows logging analytics events in Coveo Cloud",
   "securityGroups": [],
   "id": "cvt_temp_public_id",
   "type": "TAG",
@@ -94,7 +94,7 @@ ___TEMPLATE_PARAMETERS___
             "paramValue": "detailView"
           }
         ],
-        "displayName": "Detail View events are used in Coveo Analytics to define which product details are seen by the visitors.",
+        "displayName": "Detail View events are used in Coveo Analytics to define which detail pages or sections are seen by the visitors.",
         "name": "Detail View Event Type Description",
         "type": "LABEL"
       }
@@ -185,7 +185,7 @@ ___TEMPLATE_PARAMETERS___
         "type": "TEXT"
       },
       {
-        "help": "The value used to differentiate your custom event for the given type",
+        "help": "The value defining your event",
         "valueValidators": [
           {
             "type": "NON_EMPTY"
@@ -329,21 +329,6 @@ ___TEMPLATE_PARAMETERS___
         "displayName": "Product Brands",
         "simpleValueType": true,
         "name": "brands",
-        "type": "TEXT"
-      },
-      {
-        "help": "",
-        "valueValidators": [],
-        "enablingConditions": [
-          {
-            "paramName": "eventType",
-            "type": "EQUALS",
-            "paramValue": "addToCart"
-          }
-        ],
-        "displayName": "Quantity",
-        "simpleValueType": true,
-        "name": "quantity",
         "type": "TEXT"
       }
     ]
