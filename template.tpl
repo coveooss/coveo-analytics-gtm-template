@@ -2,7 +2,7 @@ ___INFO___
 
 {
   "displayName": "Coveo Analytics",
-  "description": "Logs an analytics event in Coveo Cloud",
+  "description": "The Coveo Analytics template allows logging analytics event in Coveo Cloud",
   "securityGroups": [],
   "id": "cvt_temp_public_id",
   "type": "TAG",
@@ -45,6 +45,60 @@ ___TEMPLATE_PARAMETERS___
     "simpleValueType": true,
     "name": "eventType",
     "type": "SELECT"
+  },
+  {
+    "name": "Event Description",
+    "type": "GROUP",
+    "subParams": [
+      {
+        "enablingConditions": [
+          {
+            "paramName": "eventType",
+            "type": "EQUALS",
+            "paramValue": "custom"
+          }
+        ],
+        "displayName": "Custom events are configurable in any way you like to send data into Coveo Analytics.",
+        "name": "Custom Event Type Description",
+        "type": "LABEL"
+      },
+      {
+        "enablingConditions": [
+          {
+            "paramName": "eventType",
+            "type": "EQUALS",
+            "paramValue": "load"
+          }
+        ],
+        "displayName": "Load event is used to load the Coveo Analytics script before sending event. This event should be used only once per page.",
+        "name": "Load Event Type Description",
+        "type": "LABEL"
+      },
+      {
+        "enablingConditions": [
+          {
+            "paramName": "eventType",
+            "type": "EQUALS",
+            "paramValue": "view"
+          }
+        ],
+        "displayName": "View events are used in Coveo Analytics to tell what pages your visitors are viewing.",
+        "name": "View Event Type Description",
+        "type": "LABEL"
+      },
+      {
+        "enablingConditions": [
+          {
+            "paramName": "eventType",
+            "type": "EQUALS",
+            "paramValue": "detailView"
+          }
+        ],
+        "displayName": "Detail View events are used in Coveo Analytics to define which product details are seen by the visitors.",
+        "name": "Detail View Event Type Description",
+        "type": "LABEL"
+      }
+    ]
   },
   {
     "enablingConditions": [
@@ -119,7 +173,7 @@ ___TEMPLATE_PARAMETERS___
     "type": "GROUP",
     "subParams": [
       {
-        "help": "",
+        "help": "The type of event",
         "valueValidators": [
           {
             "type": "NON_EMPTY"
@@ -131,7 +185,7 @@ ___TEMPLATE_PARAMETERS___
         "type": "TEXT"
       },
       {
-        "help": "",
+        "help": "The value used to differentiate your custom event for the given type",
         "valueValidators": [
           {
             "type": "NON_EMPTY"
@@ -150,10 +204,15 @@ ___TEMPLATE_PARAMETERS___
         "paramName": "eventType",
         "type": "EQUALS",
         "paramValue": "detailView"
+      },
+      {
+        "paramName": "eventType",
+        "type": "EQUALS",
+        "paramValue": "addToCart"
       }
     ],
     "displayName": "Event Metadata",
-    "name": "Detail View Event Metadata",
+    "name": "E-Commerce Event Metadata",
     "groupStyle": "ZIPPY_OPEN",
     "type": "GROUP",
     "subParams": [
@@ -161,6 +220,13 @@ ___TEMPLATE_PARAMETERS___
         "help": "The name of the field used to trace back the current product or variant in the Coveo Index.",
         "valueValidators": [
           {
+            "enablingConditions": [
+              {
+                "paramName": "eventType",
+                "type": "EQUALS",
+                "paramValue": "detailView"
+              }
+            ],
             "type": "NON_EMPTY"
           }
         ],
@@ -263,6 +329,21 @@ ___TEMPLATE_PARAMETERS___
         "displayName": "Product Brands",
         "simpleValueType": true,
         "name": "brands",
+        "type": "TEXT"
+      },
+      {
+        "help": "",
+        "valueValidators": [],
+        "enablingConditions": [
+          {
+            "paramName": "eventType",
+            "type": "EQUALS",
+            "paramValue": "addToCart"
+          }
+        ],
+        "displayName": "Quantity",
+        "simpleValueType": true,
+        "name": "quantity",
         "type": "TEXT"
       }
     ]
@@ -477,7 +558,8 @@ ___TEMPLATE_PARAMETERS___
         "displayName": "Analytics Endpoint URL",
         "simpleValueType": true,
         "name": "analyticsEndpoint",
-        "type": "SELECT"
+        "type": "SELECT",
+        "help": "The endpoint to use to contact your Coveo organization"
       },
       {
         "help": "The version of the script to load",
@@ -720,6 +802,13 @@ ___WEB_PERMISSIONS___
             "type": 1,
             "string": "any"
           }
+        },
+        {
+          "key": "queriesAllowed",
+          "value": {
+            "type": 1,
+            "string": "any"
+          }
         }
       ]
     },
@@ -747,6 +836,13 @@ ___WEB_PERMISSIONS___
       "param": [
         {
           "key": "urlParts",
+          "value": {
+            "type": 1,
+            "string": "any"
+          }
+        },
+        {
+          "key": "queriesAllowed",
           "value": {
             "type": 1,
             "string": "any"
@@ -973,4 +1069,4 @@ loadCoveoAnalyticsScriptIfNotLoaded(() => {
 
 ___NOTES___
 
-Created on 8/12/2019, 9:01:58 AM
+Created on 9/16/2019, 10:11:06 AM
