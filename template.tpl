@@ -170,7 +170,7 @@ ___TEMPLATE_PARAMETERS___
         "type": "TEXT"
       },
       {
-        "help": "The value of the specified Content ID Key for the Coveo index item that corresponds to the viewed product/variant.",
+        "help": "The value of the specified Content ID Key field for the Coveo index item that corresponds to the viewed product/variant.",
         "valueValidators": [
           {
             "type": "NON_EMPTY"
