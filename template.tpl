@@ -2,7 +2,7 @@ ___INFO___
 
 {
   "displayName": "Coveo Analytics",
-  "description": "Allows logging events to Coveo Usage Analytics (Coveo UA).",
+  "description": "The Coveo Analytics template allows you to log events to Coveo Usage Analytics.",
   "securityGroups": [],
   "id": "cvt_temp_public_id",
   "type": "TAG",
@@ -29,15 +29,15 @@ ___TEMPLATE_PARAMETERS___
         "value": "custom"
       },
       {
-        "displayValue": "Log view event",
+        "displayValue": "Log page view event",
         "value": "view"
       },
       {
-        "displayValue": "Log detailView event",
+        "displayValue": "Log product detail view event",
         "value": "detailView"
       },
       {
-        "displayValue": "Initialize Coveo UA",
+        "displayValue": "Initialize the Coveo Analytics script",
         "value": "load"
       }
     ],
@@ -55,7 +55,7 @@ ___TEMPLATE_PARAMETERS___
         "paramValue": "view"
       }
     ],
-    "displayName": "Event Metadata",
+    "displayName": "Event metadata",
     "name": "View Event Metadata",
     "groupStyle": "ZIPPY_OPEN",
     "type": "GROUP",
@@ -67,19 +67,19 @@ ___TEMPLATE_PARAMETERS___
             "type": "NON_EMPTY"
           }
         ],
-        "displayName": "Content ID Key",
+        "displayName": "Content ID key",
         "simpleValueType": true,
         "name": "contentIdKey",
         "type": "TEXT"
       },
       {
-        "help": "The value of the specified Content ID Key field for the Coveo index item corresponding to the viewed page.",
+        "help": "The value of the specified Content ID key field for the Coveo index item corresponding to the viewed page (e.g., <code>bf79a5b0-b85a-448e-875c-3b46aafe1bea</code>).",
         "valueValidators": [
           {
             "type": "NON_EMPTY"
           }
         ],
-        "displayName": "Content ID Value",
+        "displayName": "Content ID value",
         "simpleValueType": true,
         "name": "contentIdValue",
         "type": "TEXT"
@@ -98,7 +98,7 @@ ___TEMPLATE_PARAMETERS___
             "value": "products"
           }
         ],
-        "displayName": "Content Type",
+        "displayName": "Content type",
         "simpleValueType": true,
         "name": "contentType",
         "type": "SELECT"
@@ -113,7 +113,7 @@ ___TEMPLATE_PARAMETERS___
         "paramValue": "custom"
       }
     ],
-    "displayName": "Event Metadata",
+    "displayName": "Event metadata",
     "name": "Custom Event Metadata",
     "groupStyle": "ZIPPY_OPEN",
     "type": "GROUP",
@@ -125,7 +125,7 @@ ___TEMPLATE_PARAMETERS___
           }
         ],
         "help": "The broad category to associate the custom event with (e.g., <code>Page Navigation</code>).",
-        "displayName": "Event Type",
+        "displayName": "Event type",
         "simpleValueType": true,
         "name": "customEventType",
         "type": "TEXT"
@@ -137,7 +137,7 @@ ___TEMPLATE_PARAMETERS___
             "type": "NON_EMPTY"
           }
         ],
-        "displayName": "Event Value",
+        "displayName": "Event value",
         "simpleValueType": true,
         "name": "customEventValue",
         "type": "TEXT"
@@ -152,7 +152,7 @@ ___TEMPLATE_PARAMETERS___
         "paramValue": "detailView"
       }
     ],
-    "displayName": "Event Metadata",
+    "displayName": "Event metadata",
     "name": "Detail View Event Metadata",
     "groupStyle": "ZIPPY_OPEN",
     "type": "GROUP",
@@ -164,13 +164,13 @@ ___TEMPLATE_PARAMETERS___
             "type": "NON_EMPTY"
           }
         ],
-        "displayName": "Content ID Key",
+        "displayName": "Content ID key",
         "simpleValueType": true,
         "name": "detailContentIdKey",
         "type": "TEXT"
       },
       {
-        "help": "The value of the specified Content ID Key field for the Coveo index item that corresponds to the viewed product/variant.",
+        "help": "The value of the specified Content ID key field for the Coveo index item that corresponds to the viewed product/variant (e.g., <code>bf79a5b0-b85a-448e-875c-3b46aafe1bea</code>).",
         "valueValidators": [
           {
             "type": "NON_EMPTY"
@@ -182,15 +182,15 @@ ___TEMPLATE_PARAMETERS___
         "type": "TEXT"
       },
       {
-        "help": "(Optional) The name of a field that can uniquely and permanently identify the Coveo index item corresponding to the \"parent\" product, which regroups all other variants of the viewed product (e.g., <code>parentid</code>).",
-        "displayName": "Parent ID Key",
+        "help": "(Optional) The name of a field that can uniquely and permanently identify the Coveo index item corresponding to the \"parent\" product, which regroups all other variants of the viewed product/variant (e.g., <code>parentid</code>).",
+        "displayName": "Parent ID key",
         "simpleValueType": true,
         "name": "parentIdKey",
         "type": "TEXT"
       },
       {
-        "help": "(Optional) The value of the specified Parent ID Key field for the Coveo index item that corresponds to the \"parent\" product of the viewed product.",
-        "displayName": "Parent ID Value",
+        "help": "(Optional) The value of the specified Parent ID key field for the Coveo index item that corresponds to the \"parent\" product of the viewed product/variant (e.g., <code>4db50da4-3efc-4543-8d2a-a1bf8b700e50</code>).",
+        "displayName": "Parent ID value",
         "simpleValueType": true,
         "name": "parentIdValue",
         "type": "TEXT"
@@ -204,14 +204,14 @@ ___TEMPLATE_PARAMETERS___
       },
       {
         "help": "(Optional) The price of the viewed product/variant after all discounts have been applied (e.g., <code>9.09</code>).",
-        "displayName": "Discounted Price",
+        "displayName": "Discounted price",
         "simpleValueType": true,
         "name": "discountedPrice",
         "type": "TEXT"
       },
       {
         "help": "(Optional) The amount of time the end user spent viewing the product/variant.",
-        "displayName": "View Duration",
+        "displayName": "View duration",
         "simpleValueType": true,
         "name": "viewDuration",
         "type": "TEXT",
@@ -220,7 +220,7 @@ ___TEMPLATE_PARAMETERS___
       },
       {
         "notSetText": "None",
-        "help": "(Optional) The way the end user viewed the product/variant.",
+        "help": "(Optional) Information pertaining to the way the end user viewed the product/variant.",
         "macrosInSelect": true,
         "selectItems": [
           {
@@ -240,28 +240,28 @@ ___TEMPLATE_PARAMETERS___
             "value": "video"
           }
         ],
-        "displayName": "Action Cause",
+        "displayName": "Action cause",
         "simpleValueType": true,
         "name": "actionCause",
         "type": "SELECT"
       },
       {
-        "help": "(Optional) The name of the viewed product/variant (e.g., <code>ACME Chair (Blue)</code>).",
-        "displayName": "Product Name",
+        "help": "(Optional) The name of the viewed product/variant (e.g., <code>Chair (Blue)</code>).",
+        "displayName": "Product name",
         "simpleValueType": true,
         "name": "name",
         "type": "TEXT"
       },
       {
-        "help": "(Optional) A list of categories associated with the product/variant.",
-        "displayName": "Product Categories",
+        "help": "(Optional) A list of categories associated with the product/variant. Must be a JavaScript array of strings (e.g., <code>[\"products\", \"gaming\", \"mouse\"]</code>",
+        "displayName": "Product categories",
         "simpleValueType": true,
         "name": "categories",
         "type": "TEXT"
       },
       {
-        "help": "(Optional) A list of brands associated with the product/variant.",
-        "displayName": "Product Brands",
+        "help": "(Optional) A list of brands associated with the product/variant. Must be a JavaScript array of strings (e.g., <code>[\"acme\", \"acmetech\"]</code>",
+        "displayName": "Product brands",
         "simpleValueType": true,
         "name": "brands",
         "type": "TEXT"
@@ -276,7 +276,7 @@ ___TEMPLATE_PARAMETERS___
         "paramValue": "load"
       }
     ],
-    "displayName": "Document Metadata",
+    "displayName": "Document metadata",
     "name": "Document Metadata",
     "groupStyle": "ZIPPY_OPEN",
     "type": "GROUP",
@@ -308,14 +308,13 @@ ___TEMPLATE_PARAMETERS___
         "type": "TEXT"
       },
       {
-        "help": "(Optional) Whether the current end user is anonymous. Defaults to <code>false</code>.",
-        "displayName": "Is Anonymous",
+        "help": "(Optional) Whether the current end user is anonymous. Allowed values are <code>true</code> and <code>false</code>. Defaults to <code>false</code>.",
+        "displayName": "Is anonymous",
         "simpleValueType": true,
         "name": "isAnonymous",
         "type": "TEXT"
       },
       {
-        "help": "(Optional) The user name to use to recognize a specific user through multiple visits. Requires an additional \"Impersonate\" privilege on the API Key.",
         "displayName": "Username",
         "simpleValueType": true,
         "name": "username",
@@ -330,7 +329,7 @@ ___TEMPLATE_PARAMETERS___
             "paramValue": ""
           }
         ],
-        "displayName": "User Display Name",
+        "displayName": "User display name",
         "simpleValueType": true,
         "name": "userDisplayName",
         "type": "TEXT"
@@ -338,7 +337,6 @@ ___TEMPLATE_PARAMETERS___
     ]
   },
   {
-    "help": "Additional data to send along with the event. This information can be leveraged by Coveo ML, and/or in Coveo UA reports.",
     "enablingConditions": [
       {
         "paramName": "eventType",
@@ -346,7 +344,7 @@ ___TEMPLATE_PARAMETERS___
         "paramValue": "load"
       }
     ],
-    "displayName": "Custom Metadata",
+    "displayName": "Custom metadata (leverageable by Coveo ML and in Coveo UA reports)",
     "name": "Custom Data",
     "groupStyle": "ZIPPY_OPEN",
     "type": "GROUP",
@@ -361,7 +359,6 @@ ___TEMPLATE_PARAMETERS___
               }
             ],
             "defaultValue": "",
-            "help": "The custom metadata name (e.g., <code>userRole</code>).",
             "displayName": "Key",
             "name": "key",
             "isUnique": true,
@@ -374,7 +371,6 @@ ___TEMPLATE_PARAMETERS___
               }
             ],
             "defaultValue": "",
-            "help": "The custom metadata value (e.g., <code>customer</code>).",
             "displayName": "Value",
             "name": "value",
             "type": "TEXT"
@@ -382,11 +378,11 @@ ___TEMPLATE_PARAMETERS___
           {
             "selectItems": [
               {
-                "displayValue": "Usage Analytics Reporting",
+                "displayValue": "Coveo UA reporting",
                 "value": "usageanalytics"
               },
               {
-                "displayValue": "Machine Learning Context",
+                "displayValue": "Coveo ML context",
                 "value": "ml"
               },
               {
@@ -395,7 +391,6 @@ ___TEMPLATE_PARAMETERS___
               }
             ],
             "defaultValue": "usageanalytics",
-            "help": "The way the custom metadata is intended to be leveraged in the Coveo Cloud platform.",
             "displayName": "Purpose",
             "name": "purpose",
             "type": "SELECT"
@@ -461,7 +456,7 @@ ___TEMPLATE_PARAMETERS___
             "type": "NON_EMPTY"
           }
         ],
-        "displayName": "Coveo Usage Analytics API Key",
+        "displayName": "API key",
         "simpleValueType": true,
         "name": "apiKey",
         "type": "TEXT"
@@ -480,7 +475,7 @@ ___TEMPLATE_PARAMETERS___
         ],
         "valueValidators": [],
         "help": "The target Coveo Cloud platform environment.",
-        "displayName": "Analytics Endpoint",
+        "displayName": "Analytics endpoint",
         "simpleValueType": true,
         "name": "analyticsEndpoint",
         "type": "SELECT"
@@ -499,11 +494,11 @@ ___TEMPLATE_PARAMETERS___
                 "paramValue": ""
               }
             ],
-            "errorMessage": "You must use the format \"MAJOR.MINOR\". Ex: 1.0",
+            "errorMessage": "You must use the format <code>MAJOR.MINOR</code> (e.g., <code>1.0</code>)",
             "type": "REGEX"
           }
         ],
-        "displayName": "Script Version",
+        "displayName": "Script version",
         "simpleValueType": true,
         "name": "scriptVersion",
         "type": "TEXT",
