@@ -59,7 +59,7 @@ ___TEMPLATE_PARAMETERS___
             "paramValue": "custom"
           }
         ],
-        "displayName": "Custom events are configurable in any way you like to send data into Coveo Analytics.",
+        "displayName": "Custom events can be leveraged in Coveo UA reports and by Coveo ML Event Recommendation models.",
         "name": "Custom Event Type Description",
         "type": "LABEL"
       },
@@ -71,7 +71,7 @@ ___TEMPLATE_PARAMETERS___
             "paramValue": "load"
           }
         ],
-        "displayName": "Load event is used to load the Coveo Analytics script before sending event. This event should be used only once per page.",
+        "displayName": "This action should be performed once per page before logging events to Coveo Usage Analytics (see <a href="https://docs.coveo.com/en/2926/#loading-the-coveo-analytics-script">Loading the Coveo Analytics Script</a>).",
         "name": "Load Event Type Description",
         "type": "LABEL"
       },
@@ -83,7 +83,7 @@ ___TEMPLATE_PARAMETERS___
             "paramValue": "view"
           }
         ],
-        "displayName": "View events are used in Coveo Analytics to tell what pages your visitors are viewing.",
+        "displayName": "Page view events are leveraged by Coveo ML Event Recommendation models (see <a href="https://docs.coveo.com/en/1886/">Coveo Machine Learning Event Recommendations Deployment Overview</a>).",
         "name": "View Event Type Description",
         "type": "LABEL"
       },
@@ -95,7 +95,7 @@ ___TEMPLATE_PARAMETERS___
             "paramValue": "detailView"
           }
         ],
-        "displayName": "Detail View events are used in Coveo Analytics to define which detail pages or sections are seen by the visitors.",
+        "displayName": "Product detail view events are leveraged by Coveo ML Commerce Recommendation models.",
         "name": "Detail View Event Type Description",
         "type": "LABEL"
       }
@@ -211,7 +211,7 @@ ___TEMPLATE_PARAMETERS___
         "paramValue": "addToCart"
       }
     ],
-    "displayName": "Event Metadata",
+    "displayName": "Event metadata",
     "name": "E-Commerce Event Metadata",
     "groupStyle": "ZIPPY_OPEN",
     "type": "GROUP",
@@ -544,8 +544,7 @@ ___TEMPLATE_PARAMETERS___
         "displayName": "Analytics endpoint",
         "simpleValueType": true,
         "name": "analyticsEndpoint",
-        "type": "SELECT",
-        "help": "The endpoint to use to contact your Coveo organization"
+        "type": "SELECT"
       },
       {
         "help": "The version of the script to load",
