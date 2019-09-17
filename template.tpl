@@ -73,7 +73,7 @@ ___TEMPLATE_PARAMETERS___
         "type": "TEXT"
       },
       {
-        "help": "The value of the specified Content ID Key field for the Coveo index item corresponding to the viewed page. Typically, you should set this to a JavaScript function (e.g., <code>document.querySelector(\"meta[name=articleid]\").content</code>).",
+        "help": "The value of the specified Content ID Key field for the Coveo index item corresponding to the viewed page.",
         "valueValidators": [
           {
             "type": "NON_EMPTY"
@@ -170,7 +170,7 @@ ___TEMPLATE_PARAMETERS___
         "type": "TEXT"
       },
       {
-        "help": "The value of the specified Content ID Key for the Coveo index item that corresponds to the viewed product/variant. Typically, you should set this to a JavaScript function (e.g., <code>document.querySelector(\"meta[name=productid]\").content</code>).",
+        "help": "The value of the specified Content ID Key for the Coveo index item that corresponds to the viewed product/variant.",
         "valueValidators": [
           {
             "type": "NON_EMPTY"
