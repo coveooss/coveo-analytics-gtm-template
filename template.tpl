@@ -2,7 +2,7 @@ ___INFO___
 
 {
   "displayName": "Coveo Analytics",
-  "description": "Logs an analytics event in Coveo Cloud",
+  "description": "Allows logging events to Coveo Usage Analytics (Coveo UA).",
   "securityGroups": [],
   "id": "cvt_temp_public_id",
   "type": "TAG",
@@ -25,26 +25,27 @@ ___TEMPLATE_PARAMETERS___
     "macrosInSelect": false,
     "selectItems": [
       {
-        "displayValue": "Custom",
+        "displayValue": "Log custom event",
         "value": "custom"
       },
       {
-        "displayValue": "View",
+        "displayValue": "Log view event",
         "value": "view"
       },
       {
-        "displayValue": "Detail View",
+        "displayValue": "Log detailView event",
         "value": "detailView"
       },
       {
-        "displayValue": "Load",
+        "displayValue": "Initialize Coveo UA",
         "value": "load"
       }
     ],
-    "displayName": "Event",
+    "displayName": "Action",
     "simpleValueType": true,
     "name": "eventType",
-    "type": "SELECT"
+    "type": "SELECT",
+    "help": "The action to perform when the tag is triggered (see <a href=\"https://docs.coveo.com/en/2926/\">Logging Coveo Events From Google Tag Manager</a>)."
   },
   {
     "enablingConditions": [
@@ -60,20 +61,19 @@ ___TEMPLATE_PARAMETERS___
     "type": "GROUP",
     "subParams": [
       {
-        "help": "The name of the field used to trace back the current page in the Coveo Index.",
+        "help": "The name of a field that can uniquely and permanently map the viewed page to an item in the Coveo index (e.g., <code>permanentid</code>).",
         "valueValidators": [
           {
             "type": "NON_EMPTY"
           }
         ],
         "displayName": "Content ID Key",
-        "defaultValue": "permanentid",
         "simpleValueType": true,
         "name": "contentIdKey",
         "type": "TEXT"
       },
       {
-        "help": "The value of the field used to trace back the current page in the Coveo Index.",
+        "help": "The value of the specified Content ID Key field for the Coveo index item corresponding to the viewed page. Typically, you should set this to a JavaScript function (e.g., <code>document.querySelector(\"meta[name=articleid]\").content</code>).",
         "valueValidators": [
           {
             "type": "NON_EMPTY"
@@ -86,7 +86,7 @@ ___TEMPLATE_PARAMETERS___
       },
       {
         "notSetText": "",
-        "help": "(Optional) The type of content being tracked (see <a href=\"https://docs.coveo.com/en/1744/coveo-machine-learning/coveo-machine-learning-recommendation-content-types\">Coveo Machine Learning Recommendation Content Types</a>).",
+        "help": "(Optional) The type of content being viewed (see <a href=\"https://docs.coveo.com/en/1744/\">Coveo Machine Learning Recommendation Content Types</a>).",
         "macrosInSelect": true,
         "selectItems": [
           {
@@ -119,19 +119,19 @@ ___TEMPLATE_PARAMETERS___
     "type": "GROUP",
     "subParams": [
       {
-        "help": "",
         "valueValidators": [
           {
             "type": "NON_EMPTY"
           }
         ],
+        "help": "The broad category to associate the custom event with (e.g., <code>Page Navigation</code>).",
         "displayName": "Event Type",
         "simpleValueType": true,
         "name": "customEventType",
         "type": "TEXT"
       },
       {
-        "help": "",
+        "help": "A concise description of the specific action that triggered the custom event (e.g., <code>Click Help Button</code>).",
         "valueValidators": [
           {
             "type": "NON_EMPTY"
@@ -158,20 +158,19 @@ ___TEMPLATE_PARAMETERS___
     "type": "GROUP",
     "subParams": [
       {
-        "help": "The name of the field used to trace back the current product or variant in the Coveo Index.",
+        "help": "The name of a field that can uniquely and permanently map the viewed product/variant back to an item in the Coveo index (e.g., <code>permanentid</code>).",
         "valueValidators": [
           {
             "type": "NON_EMPTY"
           }
         ],
         "displayName": "Content ID Key",
-        "defaultValue": "permanentid",
         "simpleValueType": true,
         "name": "detailContentIdKey",
         "type": "TEXT"
       },
       {
-        "help": "The value of the field used to trace back the current product or variant in the Coveo Index.",
+        "help": "The value of the specified Content ID Key for the Coveo index item that corresponds to the viewed product/variant. Typically, you should set this to a JavaScript function (e.g., <code>document.querySelector(\"meta[name=productid]\").content</code>).",
         "valueValidators": [
           {
             "type": "NON_EMPTY"
@@ -183,43 +182,45 @@ ___TEMPLATE_PARAMETERS___
         "type": "TEXT"
       },
       {
-        "help": "(Optional) The index field associated to the \"parent\" product ID that regroups all variants of a particular product.",
+        "help": "(Optional) The name of a field that can uniquely and permanently identify the Coveo index item corresponding to the \"parent\" product, which regroups all other variants of the viewed product (e.g., <code>parentid</code>).",
         "displayName": "Parent ID Key",
         "simpleValueType": true,
         "name": "parentIdKey",
         "type": "TEXT"
       },
       {
-        "help": "(Optional) The parent item ID that regroups together all variants of a product.",
+        "help": "(Optional) The value of the specified Parent ID Key field for the Coveo index item that corresponds to the \"parent\" product of the viewed product.",
         "displayName": "Parent ID Value",
         "simpleValueType": true,
         "name": "parentIdValue",
         "type": "TEXT"
       },
       {
-        "help": "(Optional) The price of the item.",
+        "help": "(Optional) The price of the viewed product/variant (e.g., <code>12.99</code>).",
         "displayName": "Price",
         "simpleValueType": true,
         "name": "price",
         "type": "TEXT"
       },
       {
-        "help": "(Optional) The price after all discounts have been applied.",
+        "help": "(Optional) The price of the viewed product/variant after all discounts have been applied (e.g., <code>9.09</code>).",
         "displayName": "Discounted Price",
         "simpleValueType": true,
         "name": "discountedPrice",
         "type": "TEXT"
       },
       {
-        "help": "(Optional) The amount of time in seconds passed viewing the item.",
+        "help": "(Optional) The amount of time the end user spent viewing the product/variant.",
         "displayName": "View Duration",
         "simpleValueType": true,
         "name": "viewDuration",
-        "type": "TEXT"
+        "type": "TEXT",
+        "valueUnit": "seconds",
+        "valueHint": "10.00"
       },
       {
         "notSetText": "None",
-        "help": "(Optional) Used to provide more information that would explain how the user viewed the details of this product.",
+        "help": "(Optional) The way the end user viewed the product/variant.",
         "macrosInSelect": true,
         "selectItems": [
           {
@@ -227,7 +228,7 @@ ___TEMPLATE_PARAMETERS___
             "value": "view"
           },
           {
-            "displayValue": "Quickview (eg: Modal)",
+            "displayValue": "Quickview (e.g., modal)",
             "value": "quickview"
           },
           {
@@ -245,21 +246,21 @@ ___TEMPLATE_PARAMETERS___
         "type": "SELECT"
       },
       {
-        "help": "(Optional) The name of the product",
+        "help": "(Optional) The name of the viewed product/variant (e.g., <code>ACME Chair (Blue)</code>).",
         "displayName": "Product Name",
         "simpleValueType": true,
         "name": "name",
         "type": "TEXT"
       },
       {
-        "help": "(Optional) A list of categories associated with the product",
+        "help": "(Optional) A list of categories associated with the product/variant.",
         "displayName": "Product Categories",
         "simpleValueType": true,
         "name": "categories",
         "type": "TEXT"
       },
       {
-        "help": "(Optional) A list of brands associated with the product",
+        "help": "(Optional) A list of brands associated with the product/variant.",
         "displayName": "Product Brands",
         "simpleValueType": true,
         "name": "brands",
@@ -281,7 +282,7 @@ ___TEMPLATE_PARAMETERS___
     "type": "GROUP",
     "subParams": [
       {
-        "help": "The current language of the page's content.",
+        "help": "The language of the current page. Must be a valid <a href='https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes'>ISO-639-1 code</a> (e.g., <code>en</code>)",
         "valueValidators": [
           {
             "type": "NON_EMPTY"
@@ -293,21 +294,21 @@ ___TEMPLATE_PARAMETERS___
         "type": "TEXT"
       },
       {
-        "help": "(Optional) The current URL of the page. If not set, \"window.location\" will be used.",
+        "help": "(Optional) The URL of the current page. Defaults to <code>window.location</code>.",
         "displayName": "Location",
         "simpleValueType": true,
         "name": "location",
         "type": "TEXT"
       },
       {
-        "help": "(Optional) The title of the document. If not set, \"document.title\" will be used.",
+        "help": "(Optional) The title of the current page. Defaults to <code>document.title</code>.",
         "displayName": "Title",
         "simpleValueType": true,
         "name": "title",
         "type": "TEXT"
       },
       {
-        "help": "(Optional) Boolean representing whether the current visit is from an anonymous user.",
+        "help": "(Optional) Whether the current end user is anonymous. Defaults to <code>false</code>.",
         "displayName": "Is Anonymous",
         "simpleValueType": true,
         "name": "isAnonymous",
@@ -321,7 +322,7 @@ ___TEMPLATE_PARAMETERS___
         "type": "TEXT"
       },
       {
-        "help": "(Optional) A human-friendly user name that will appear in the Usage Analytics reports, replacing the User Name only for display.",
+        "help": "(Optional) A human-readable name to display in usage analytics reports for the current user (e.g., <code>Alice Smith</code>).",
         "enablingConditions": [
           {
             "paramName": "username",
@@ -337,7 +338,7 @@ ___TEMPLATE_PARAMETERS___
     ]
   },
   {
-    "help": "Custom Data to be sent alongside the event. This data can then be reused in Coveo Cloud",
+    "help": "Additional data to send along with the event. This information can be leveraged by Coveo ML, and/or in Coveo UA reports.",
     "enablingConditions": [
       {
         "paramName": "eventType",
@@ -360,6 +361,7 @@ ___TEMPLATE_PARAMETERS___
               }
             ],
             "defaultValue": "",
+            "help": "The custom metadata name (e.g., <code>userRole</code>).",
             "displayName": "Key",
             "name": "key",
             "isUnique": true,
@@ -372,6 +374,7 @@ ___TEMPLATE_PARAMETERS___
               }
             ],
             "defaultValue": "",
+            "help": "The custom metadata value (e.g., <code>customer</code>).",
             "displayName": "Value",
             "name": "value",
             "type": "TEXT"
@@ -392,6 +395,7 @@ ___TEMPLATE_PARAMETERS___
               }
             ],
             "defaultValue": "usageanalytics",
+            "help": "The way the custom metadata is intended to be leveraged in the Coveo Cloud platform.",
             "displayName": "Purpose",
             "name": "purpose",
             "type": "SELECT"
@@ -407,6 +411,7 @@ ___TEMPLATE_PARAMETERS___
             "selectItems": [],
             "valueValidators": [],
             "defaultValue": "",
+            "help": "A JavaScript object to merge with the other specified custom metadata.",
             "displayName": "Object to merge",
             "name": "object",
             "type": "SELECT"
@@ -422,7 +427,7 @@ ___TEMPLATE_PARAMETERS___
                 "value": "ml"
               },
               {
-                "displayValue": "All",
+                "displayValue": "Both",
                 "value": "all"
               }
             ],
@@ -443,7 +448,7 @@ ___TEMPLATE_PARAMETERS___
     "type": "GROUP",
     "subParams": [
       {
-        "help": "For more information on how to create an API key in Coveo Cloud, follow the link here:  <a href=\"https://docs.coveo.com/en/1718/cloud-v2-administrators/manage-api-keys#add-an-api-key\">Coveo Cloud - Manage API Keys - Add an API key</a>",
+        "help": "An API key granting only the <strong>Usage Analytics - Push</strong> privilege in the target Coveo Cloud organization (see <a href=\"https://docs.coveo.com/en/1718/\">Adding and Managing API Keys</a>).",
         "valueValidators": [
           {
             "enablingConditions": [
@@ -456,7 +461,7 @@ ___TEMPLATE_PARAMETERS___
             "type": "NON_EMPTY"
           }
         ],
-        "displayName": "Coveo Analytics API Key",
+        "displayName": "Coveo Usage Analytics API Key",
         "simpleValueType": true,
         "name": "apiKey",
         "type": "TEXT"
@@ -474,7 +479,8 @@ ___TEMPLATE_PARAMETERS___
           }
         ],
         "valueValidators": [],
-        "displayName": "Analytics Endpoint URL",
+        "help": "The target Coveo Cloud platform environment.",
+        "displayName": "Analytics Endpoint",
         "simpleValueType": true,
         "name": "analyticsEndpoint",
         "type": "SELECT"
