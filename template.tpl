@@ -48,6 +48,60 @@ ___TEMPLATE_PARAMETERS___
     "help": "The action to perform when the tag is triggered (see <a href=\"https://docs.coveo.com/en/2926/\">Logging Coveo Events From Google Tag Manager</a>)."
   },
   {
+    "name": "Event Description",
+    "type": "GROUP",
+    "subParams": [
+      {
+        "enablingConditions": [
+          {
+            "paramName": "eventType",
+            "type": "EQUALS",
+            "paramValue": "custom"
+          }
+        ],
+        "displayName": "Custom events can be leveraged in Coveo UA reports and by Coveo ML Event Recommendation models.",
+        "name": "Custom Event Type Description",
+        "type": "LABEL"
+      },
+      {
+        "enablingConditions": [
+          {
+            "paramName": "eventType",
+            "type": "EQUALS",
+            "paramValue": "load"
+          }
+        ],
+        "displayName": "This action should be performed once per page before logging events to Coveo Usage Analytics (see <a href="https://docs.coveo.com/en/2926/#loading-the-coveo-analytics-script">Loading the Coveo Analytics Script</a>).",
+        "name": "Load Event Type Description",
+        "type": "LABEL"
+      },
+      {
+        "enablingConditions": [
+          {
+            "paramName": "eventType",
+            "type": "EQUALS",
+            "paramValue": "view"
+          }
+        ],
+        "displayName": "Page view events are leveraged by Coveo ML Event Recommendation models (see <a href="https://docs.coveo.com/en/1886/">Coveo Machine Learning Event Recommendations Deployment Overview</a>).",
+        "name": "View Event Type Description",
+        "type": "LABEL"
+      },
+      {
+        "enablingConditions": [
+          {
+            "paramName": "eventType",
+            "type": "EQUALS",
+            "paramValue": "detailView"
+          }
+        ],
+        "displayName": "Product detail view events are leveraged by Coveo ML Commerce Recommendation models.",
+        "name": "Detail View Event Type Description",
+        "type": "LABEL"
+      }
+    ]
+  },
+  {
     "enablingConditions": [
       {
         "paramName": "eventType",
@@ -150,10 +204,15 @@ ___TEMPLATE_PARAMETERS___
         "paramName": "eventType",
         "type": "EQUALS",
         "paramValue": "detailView"
+      },
+      {
+        "paramName": "eventType",
+        "type": "EQUALS",
+        "paramValue": "addToCart"
       }
     ],
     "displayName": "Event metadata",
-    "name": "Detail View Event Metadata",
+    "name": "E-Commerce Event Metadata",
     "groupStyle": "ZIPPY_OPEN",
     "type": "GROUP",
     "subParams": [
@@ -161,6 +220,13 @@ ___TEMPLATE_PARAMETERS___
         "help": "The name of a field that can uniquely and permanently map the viewed product/variant back to an item in the Coveo index (e.g., <code>permanentid</code>).",
         "valueValidators": [
           {
+            "enablingConditions": [
+              {
+                "paramName": "eventType",
+                "type": "EQUALS",
+                "paramValue": "detailView"
+              }
+            ],
             "type": "NON_EMPTY"
           }
         ],
@@ -721,6 +787,13 @@ ___WEB_PERMISSIONS___
             "type": 1,
             "string": "any"
           }
+        },
+        {
+          "key": "queriesAllowed",
+          "value": {
+            "type": 1,
+            "string": "any"
+          }
         }
       ]
     },
@@ -748,6 +821,13 @@ ___WEB_PERMISSIONS___
       "param": [
         {
           "key": "urlParts",
+          "value": {
+            "type": 1,
+            "string": "any"
+          }
+        },
+        {
+          "key": "queriesAllowed",
           "value": {
             "type": 1,
             "string": "any"
@@ -974,4 +1054,4 @@ loadCoveoAnalyticsScriptIfNotLoaded(() => {
 
 ___NOTES___
 
-Created on 8/12/2019, 9:01:58 AM
+Created on 9/16/2019, 10:11:06 AM
