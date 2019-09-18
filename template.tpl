@@ -37,6 +37,10 @@ ___TEMPLATE_PARAMETERS___
         "value": "detailView"
       },
       {
+        "value": "addToCart",
+        "displayValue": "Log add to cart event"
+      },
+      {
         "displayValue": "Initialize the Coveo Analytics script",
         "value": "load"
       }
@@ -282,7 +286,14 @@ ___TEMPLATE_PARAMETERS___
         "name": "viewDuration",
         "type": "TEXT",
         "valueUnit": "seconds",
-        "valueHint": "10.00"
+        "valueHint": "10.00",
+        "enablingConditions": [
+          {
+            "paramName": "eventType",
+            "paramValue": "detailView",
+            "type": "EQUALS"
+          }
+        ]
       },
       {
         "notSetText": "None",
@@ -309,7 +320,14 @@ ___TEMPLATE_PARAMETERS___
         "displayName": "Action cause",
         "simpleValueType": true,
         "name": "actionCause",
-        "type": "SELECT"
+        "type": "SELECT",
+        "enablingConditions": [
+          {
+            "paramName": "eventType",
+            "paramValue": "detailView",
+            "type": "EQUALS"
+          }
+        ]
       },
       {
         "help": "(Optional) The name of the viewed product/variant (e.g., <code>Chair (Blue)</code>).",
@@ -331,6 +349,35 @@ ___TEMPLATE_PARAMETERS___
         "simpleValueType": true,
         "name": "brands",
         "type": "TEXT"
+      },
+      {
+        "help": "(Optional) The number of product units that were added to or removed from the cart.",
+        "valueValidators": [],
+        "enablingConditions": [
+          {
+            "paramName": "eventType",
+            "type": "EQUALS",
+            "paramValue": "addToCart"
+          }
+        ],
+        "displayName": "Quantity",
+        "simpleValueType": true,
+        "name": "quantity",
+        "type": "TEXT"
+      },
+      {
+        "type": "TEXT",
+        "name": "cartId",
+        "displayName": "Cart ID",
+        "simpleValueType": true,
+        "help": "(Optional) The unique identifier of the target cart.",
+        "enablingConditions": [
+          {
+            "paramName": "eventType",
+            "paramValue": "addToCart",
+            "type": "EQUALS"
+          }
+        ]
       }
     ]
   },
