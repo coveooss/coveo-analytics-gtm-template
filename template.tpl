@@ -1,4 +1,4 @@
-___INFO___
+﻿___INFO___
 
 {
   "displayName": "Coveo Analytics",
@@ -75,7 +75,7 @@ ___TEMPLATE_PARAMETERS___
             "paramValue": "load"
           }
         ],
-        "displayName": "This action should be performed once per page before logging events to Coveo Usage Analytics (see <a href="https://docs.coveo.com/en/2926/#loading-the-coveo-analytics-script">Loading the Coveo Analytics Script</a>).",
+        "displayName": "This action should be performed once per page before logging events to Coveo Usage Analytics (see <a href=\"https://docs.coveo.com/en/2926/#loading-the-coveo-analytics-script\">Loading the Coveo Analytics Script</a>).",
         "name": "Load Event Type Description",
         "type": "LABEL"
       },
@@ -87,7 +87,7 @@ ___TEMPLATE_PARAMETERS___
             "paramValue": "view"
           }
         ],
-        "displayName": "Page view events are leveraged by Coveo ML Event Recommendation models (see <a href="https://docs.coveo.com/en/1886/">Coveo Machine Learning Event Recommendations Deployment Overview</a>).",
+        "displayName": "Page view events are leveraged by Coveo ML Event Recommendation models (see <a href=\"https://docs.coveo.com/en/1886/\">Coveo Machine Learning Event Recommendations Deployment Overview</a>).",
         "name": "View Event Type Description",
         "type": "LABEL"
       },
