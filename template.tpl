@@ -102,6 +102,18 @@ ___TEMPLATE_PARAMETERS___
         "displayName": "Product detail view events are leveraged by Coveo ML Commerce Recommendation models.",
         "name": "Detail View Event Type Description",
         "type": "LABEL"
+      },
+      {
+        "type": "LABEL",
+        "name": "Add To Cart Event Type Description",
+        "displayName": "Add to cart events are leveraged by Coveo ML Event Recommendation models",
+        "enablingConditions": [
+          {
+            "paramName": "eventType",
+            "paramValue": "addToCart",
+            "type": "EQUALS"
+          }
+        ]
       }
     ]
   },
@@ -1056,6 +1068,23 @@ const eventDataForTypeMap = {
       discountedPrice: data.discountedPrice,
       viewDuration: data.viewDuration,
       actionCause: data.actionCause,
+      name: data.name,
+      categories: data.categories,
+      brands: data.brands
+    }
+  },
+  addToCart: {
+    eventType: "addToCart",
+    eventValue: data.addToCartIdValue,
+    customData: {
+      contentIdKey: data.addToCartIdKey,
+      contentIdValue: data.addToCartIdValue,
+      parentIdKey: data.parentIdKey,
+      parentIdValue: data.parentIdValue,
+      price: data.price,
+      discountedPrice: data.discountedPrice,
+      quantity: data.quantity,
+      cartId: data.cartId,
       name: data.name,
       categories: data.categories,
       brands: data.brands
