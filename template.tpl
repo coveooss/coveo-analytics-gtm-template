@@ -1042,7 +1042,8 @@ const generateCustomData = () => {
 const eventTypeMap = {
   view: "view",
   custom: "custom",
-  detailView: "custom"
+  detailView: "custom",
+  addToCart: "custom"
 };
 
 const eventDataForTypeMap = {
@@ -1075,10 +1076,10 @@ const eventDataForTypeMap = {
   },
   addToCart: {
     eventType: "addToCart",
-    eventValue: data.addToCartIdValue,
+    eventValue: data.detailContentIdValue,
     customData: {
-      contentIdKey: data.addToCartIdKey,
-      contentIdValue: data.addToCartIdValue,
+      contentIdKey: data.detailContentIdKey,
+      contentIdValue: data.detailContentIdValue,
       parentIdKey: data.parentIdKey,
       parentIdValue: data.parentIdValue,
       price: data.price,
