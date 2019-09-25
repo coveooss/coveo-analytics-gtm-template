@@ -349,18 +349,22 @@ ___TEMPLATE_PARAMETERS___
         "type": "TEXT"
       },
       {
-        "help": "(Optional) A list of categories associated with the product/variant. Must be a JavaScript array of strings (e.g., <code>[\"products\", \"gaming\", \"mouse\"]</code>",
+        "help": "(Optional) A list of categories associated with the product/variant. Must be a JavaScript array of strings (e.g., <code>[\"products\", \"gaming\", \"mouse\"]</code>)",
+        "macrosInSelect": true,
+        "selectItems": [],
         "displayName": "Product categories",
         "simpleValueType": true,
         "name": "categories",
-        "type": "TEXT"
+        "type": "SELECT"
       },
       {
-        "help": "(Optional) A list of brands associated with the product/variant. Must be a JavaScript array of strings (e.g., <code>[\"acme\", \"acmetech\"]</code>",
+        "help": "(Optional) A list of brands associated with the product/variant. Must be a JavaScript array of strings (e.g., <code>[\"acme\", \"acmetech\"]</code>)",
+        "macrosInSelect": true,
+        "selectItems": [],
         "displayName": "Product brands",
         "simpleValueType": true,
         "name": "brands",
-        "type": "TEXT"
+        "type": "SELECT"
       },
       {
         "help": "(Optional) The number of product units that were added to or removed from the cart.",
