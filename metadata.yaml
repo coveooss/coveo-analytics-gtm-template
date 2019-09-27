@@ -1,5 +1,5 @@
 homepage: "www.coveo.com",
 documentation: "https://docs.coveo.com/en/2926",
 versions:
-  - sha: 123abc
+  - sha: faa8bd7c2a6b1067c25be751f7f5a79ee0b9ecae
     changeNotes: Initial Version
