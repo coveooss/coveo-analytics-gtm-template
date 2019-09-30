@@ -10,6 +10,7 @@ ___INFO___
 {
   "displayName": "Coveo Analytics",
   "description": "The Coveo Analytics template allows you to log events to Coveo Usage Analytics.",
+  "categories": ["ANALYTICS", "PERSONALIZATION", "SESSION_RECORDING"],
   "securityGroups": [],
   "id": "cvt_temp_public_id",
   "type": "TAG",
