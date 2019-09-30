@@ -2,7 +2,7 @@ import json
 import re
 import sys
 
-SKIPPED_KEYS = ['___SANDBOXED_JS_FOR_WEB_TEMPLATE___']
+SKIPPED_KEYS = ['___SANDBOXED_JS_FOR_WEB_TEMPLATE___', '___TERMS_OF_SERVICE___']
 
 def print_skipped():
   return '[\033[94mSKIPPED\033[0m]'
