@@ -51,6 +51,10 @@ ___TEMPLATE_PARAMETERS___
       {
         "displayValue": "Initialize the Coveo Analytics script",
         "value": "load"
+      },
+      {
+        "value": "universal",
+        "displayValue": "Send Universal Tracker Event"
       }
     ],
     "displayName": "Action",
@@ -409,8 +413,23 @@ ___TEMPLATE_PARAMETERS___
     "enablingConditions": [
       {
         "paramName": "eventType",
-        "type": "NOT_EQUALS",
-        "paramValue": "load"
+        "type": "EQUALS",
+        "paramValue": "custom"
+      },
+      {
+        "paramName": "eventType",
+        "type": "EQUALS",
+        "paramValue": "view"
+      },
+      {
+        "paramName": "eventType",
+        "type": "EQUALS",
+        "paramValue": "detailView"
+      },
+      {
+        "paramName": "eventType",
+        "type": "EQUALS",
+        "paramValue": "addToCart"
       }
     ],
     "displayName": "Document metadata",
@@ -477,8 +496,23 @@ ___TEMPLATE_PARAMETERS___
     "enablingConditions": [
       {
         "paramName": "eventType",
-        "type": "NOT_EQUALS",
-        "paramValue": "load"
+        "type": "EQUALS",
+        "paramValue": "custom"
+      },
+      {
+        "paramName": "eventType",
+        "type": "EQUALS",
+        "paramValue": "view"
+      },
+      {
+        "paramName": "eventType",
+        "type": "EQUALS",
+        "paramValue": "detailView"
+      },
+      {
+        "paramName": "eventType",
+        "type": "EQUALS",
+        "paramValue": "addToCart"
       }
     ],
     "displayName": "Custom metadata (leverageable by Coveo ML and in Coveo UA reports)",
@@ -640,6 +674,40 @@ ___TEMPLATE_PARAMETERS___
         "name": "scriptVersion",
         "type": "TEXT",
         "valueHint": "1.0"
+      }
+    ]
+  },
+  {
+    "type": "GROUP",
+    "name": "Universal Tracker Configuration",
+    "displayName": "Universal Tracker Configuration",
+    "groupStyle": "ZIPPY_OPEN",
+    "subParams": [
+      {
+        "type": "TEXT",
+        "name": "ecommerce",
+        "displayName": "ECommerce variable",
+        "help": "A reference to a <a href=\"https://support.google.com/tagmanager/answer/7683362?hl=en&ref_topic=9125128\">data layer variable</a> that maps to the <code>ecommerce</code> key in the data layer object (e.g., <code>{{ECommerce}})</code>.",
+        "simpleValueType": true,
+        "valueValidators": [
+          {
+            "type": "NON_EMPTY"
+          }
+        ]
+      },
+      {
+        "type": "TEXT",
+        "name": "visitId",
+        "displayName": "Visit ID",
+        "simpleValueType": true,
+        "help": "(Optional) The <a href=\"https://docs.coveo.com/en/272/\">visit ID</a>. If not specified, will be automatically set by Coveo UA. If specified, must be set to a <a href=\"https://en.wikipedia.org/wiki/Universally_unique_identifier#Version_4_(random)\">UUIDv4.</a>"
+      }
+    ],
+    "enablingConditions": [
+      {
+        "paramName": "eventType",
+        "paramValue": "universal",
+        "type": "EQUALS"
       }
     ]
   }
@@ -1055,7 +1123,8 @@ const eventTypeMap = {
   view: "view",
   custom: "custom",
   detailView: "custom",
-  addToCart: "custom"
+  addToCart: "custom",
+  universal: "collecttag"
 };
 
 const eventDataForTypeMap = {
@@ -1102,6 +1171,10 @@ const eventDataForTypeMap = {
       categories: data.categories,
       brands: data.brands
     }
+  },
+  universal: {
+    cid: data.visitId,
+    ecommerce: data.ecommerce
   }
 };
 
