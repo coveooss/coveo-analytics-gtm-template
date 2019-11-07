@@ -1,5 +1,7 @@
 homepage: "www.coveo.com",
 documentation: "https://docs.coveo.com/en/2926",
 versions:
+  - sha: 3c15c782c40b8ba9570ae995011500ef82f7ab4a
+    changeNotes: Added Universal Tracker
   - sha: 2ffef09b5c4cfc353aef41c56c541970774596b0
     changeNotes: Initial Version
