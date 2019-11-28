@@ -5,20 +5,25 @@ Template Gallery Developer Terms of Service available at
 https://developers.google.com/tag-manager/gallery-tos (or such other URL as
 Google may provide), as modified from time to time.
 
+
 ___INFO___
 
 {
   "displayName": "Coveo Analytics",
   "description": "The Coveo Analytics template allows you to log events to Coveo Usage Analytics.",
-  "categories": ["ANALYTICS", "PERSONALIZATION", "SESSION_RECORDING"],
+  "categories": [
+    "ANALYTICS",
+    "PERSONALIZATION",
+    "SESSION_RECORDING"
+  ],
   "securityGroups": [],
   "id": "cvt_temp_public_id",
   "type": "TAG",
   "version": 1,
   "brand": {
-    "thumbnail": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAFQSURBVFhHxZfRTcMwEIbPLTxUCkJs0IcwABMAm8Ai2GaCsEE6CWUD3qFS2KColXhoKnMBH2qpk8Z2bH9SlPik6P9zvjs5sOK5wOsGEsHWPFf6cTaGjZjIqvpdx2HHABHXiMEAouBTMShqqIsLWS11NAhmA0QEIyN9N8PgnAHwUzh5XfPLOx0dlO4MHPKBr4hMvpV67Y2tAeIFXxJn8n2u1864GiC8jXTXwHGusUaesT7KLz6d6pgVvhn4h/0MGdgAYtm6wxsgehrxrYF2es6QcBk4xDhDYhog9lo33Ba0s/fBETOgKpQW2eNipgM/RDBgFiZCbsFSofAGtldt4g0hMtAIFzWrnxIMIlWOYSsTjGJ7YcK3Bubo/jaTi3vXQ6xrBhphmeBA0t1SLvQ0MLwwcawGevWyD20ZsOplHwwG3FvKhR0DcYX/WD3kPN3vOcA3SzrpBQgaw0IAAAAASUVORK5CYII=",
-    "displayName": "",
-    "id": "brand_dummy"
+    "thumbnail": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAFQSURBVFhHxZfRTcMwEIbPLTxUCkJs0IcwABMAm8Ai2GaCsEE6CWUD3qFS2KColXhoKnMBH2qpk8Z2bH9SlPik6P9zvjs5sOK5wOsGEsHWPFf6cTaGjZjIqvpdx2HHABHXiMEAouBTMShqqIsLWS11NAhmA0QEIyN9N8PgnAHwUzh5XfPLOx0dlO4MHPKBr4hMvpV67Y2tAeIFXxJn8n2u1864GiC8jXTXwHGusUaesT7KLz6d6pgVvhn4h/0MGdgAYtm6wxsgehrxrYF2es6QcBk4xDhDYhog9lo33Ba0s/fBETOgKpQW2eNipgM/RDBgFiZCbsFSofAGtldt4g0hMtAIFzWrnxIMIlWOYSsTjGJ7YcK3Bubo/jaTi3vXQ6xrBhphmeBA0t1SLvQ0MLwwcawGevWyD20ZsOplHwwG3FvKhR0DcYX/WD3kPN3vOcA3SzrpBQgaw0IAAAAASUVORK5CYII\u003d",
+    "displayName": "coveo",
+    "id": "github.com_coveo"
   },
   "containerContexts": [
     "WEB"
@@ -61,7 +66,7 @@ ___TEMPLATE_PARAMETERS___
     "simpleValueType": true,
     "name": "eventType",
     "type": "SELECT",
-    "help": "The action to perform when the tag is triggered (see <a href=\"https://docs.coveo.com/en/2926/\">Logging Coveo Events From Google Tag Manager</a>)."
+    "help": "The action to perform when the tag is triggered (see \u003ca href\u003d\"https://docs.coveo.com/en/2926/\"\u003eLogging Coveo Events From Google Tag Manager\u003c/a\u003e)."
   },
   {
     "name": "Event Description",
@@ -87,7 +92,7 @@ ___TEMPLATE_PARAMETERS___
             "paramValue": "load"
           }
         ],
-        "displayName": "This action should be performed once per page before logging events to Coveo Usage Analytics (see <a href=\"https://docs.coveo.com/en/2926/#loading-the-coveo-analytics-script\">Loading the Coveo Analytics Script</a>).",
+        "displayName": "This action should be performed once per page before logging events to Coveo Usage Analytics (see \u003ca href\u003d\"https://docs.coveo.com/en/2926/#loading-the-coveo-analytics-script\"\u003eLoading the Coveo Analytics Script\u003c/a\u003e).",
         "name": "Load Event Type Description",
         "type": "LABEL"
       },
@@ -99,7 +104,7 @@ ___TEMPLATE_PARAMETERS___
             "paramValue": "view"
           }
         ],
-        "displayName": "Page view events are leveraged by Coveo ML Event Recommendation models (see <a href=\"https://docs.coveo.com/en/1886/\">Coveo Machine Learning Event Recommendations Deployment Overview</a>).",
+        "displayName": "Page view events are leveraged by Coveo ML Event Recommendation models (see \u003ca href\u003d\"https://docs.coveo.com/en/1886/\"\u003eCoveo Machine Learning Event Recommendations Deployment Overview\u003c/a\u003e).",
         "name": "View Event Type Description",
         "type": "LABEL"
       },
@@ -143,7 +148,7 @@ ___TEMPLATE_PARAMETERS___
     "type": "GROUP",
     "subParams": [
       {
-        "help": "The name of a field that can uniquely and permanently map the viewed page to an item in the Coveo index (e.g., <code>permanentid</code>).",
+        "help": "The name of a field that can uniquely and permanently map the viewed page to an item in the Coveo index (e.g., \u003ccode\u003epermanentid\u003c/code\u003e).",
         "valueValidators": [
           {
             "type": "NON_EMPTY"
@@ -155,7 +160,7 @@ ___TEMPLATE_PARAMETERS___
         "type": "TEXT"
       },
       {
-        "help": "The value of the specified Content ID key field for the Coveo index item corresponding to the viewed page (e.g., <code>bf79a5b0-b85a-448e-875c-3b46aafe1bea</code>).",
+        "help": "The value of the specified Content ID key field for the Coveo index item corresponding to the viewed page (e.g., \u003ccode\u003ebf79a5b0-b85a-448e-875c-3b46aafe1bea\u003c/code\u003e).",
         "valueValidators": [
           {
             "type": "NON_EMPTY"
@@ -168,7 +173,7 @@ ___TEMPLATE_PARAMETERS___
       },
       {
         "notSetText": "",
-        "help": "(Optional) The type of content being viewed (see <a href=\"https://docs.coveo.com/en/1744/\">Coveo Machine Learning Recommendation Content Types</a>).",
+        "help": "(Optional) The type of content being viewed (see \u003ca href\u003d\"https://docs.coveo.com/en/1744/\"\u003eCoveo Machine Learning Recommendation Content Types\u003c/a\u003e).",
         "macrosInSelect": true,
         "selectItems": [
           {
@@ -206,14 +211,14 @@ ___TEMPLATE_PARAMETERS___
             "type": "NON_EMPTY"
           }
         ],
-        "help": "The broad category to associate the custom event with (e.g., <code>Page Navigation</code>).",
+        "help": "The broad category to associate the custom event with (e.g., \u003ccode\u003ePage Navigation\u003c/code\u003e).",
         "displayName": "Event type",
         "simpleValueType": true,
         "name": "customEventType",
         "type": "TEXT"
       },
       {
-        "help": "A concise description of the specific action that triggered the custom event (e.g., <code>Click Help Button</code>).",
+        "help": "A concise description of the specific action that triggered the custom event (e.g., \u003ccode\u003eClick Help Button\u003c/code\u003e).",
         "valueValidators": [
           {
             "type": "NON_EMPTY"
@@ -245,7 +250,7 @@ ___TEMPLATE_PARAMETERS___
     "type": "GROUP",
     "subParams": [
       {
-        "help": "The name of a field that can uniquely and permanently map the viewed product/variant back to an item in the Coveo index (e.g., <code>permanentid</code>).",
+        "help": "The name of a field that can uniquely and permanently map the viewed product/variant back to an item in the Coveo index (e.g., \u003ccode\u003epermanentid\u003c/code\u003e).",
         "valueValidators": [
           {
             "enablingConditions": [
@@ -264,7 +269,7 @@ ___TEMPLATE_PARAMETERS___
         "type": "TEXT"
       },
       {
-        "help": "The value of the specified Content ID key field for the Coveo index item that corresponds to the viewed product/variant (e.g., <code>bf79a5b0-b85a-448e-875c-3b46aafe1bea</code>).",
+        "help": "The value of the specified Content ID key field for the Coveo index item that corresponds to the viewed product/variant (e.g., \u003ccode\u003ebf79a5b0-b85a-448e-875c-3b46aafe1bea\u003c/code\u003e).",
         "valueValidators": [
           {
             "type": "NON_EMPTY"
@@ -276,28 +281,28 @@ ___TEMPLATE_PARAMETERS___
         "type": "TEXT"
       },
       {
-        "help": "(Optional) The name of a field that can uniquely and permanently identify the Coveo index item corresponding to the \"parent\" product, which regroups all other variants of the viewed product/variant (e.g., <code>parentid</code>).",
+        "help": "(Optional) The name of a field that can uniquely and permanently identify the Coveo index item corresponding to the \"parent\" product, which regroups all other variants of the viewed product/variant (e.g., \u003ccode\u003eparentid\u003c/code\u003e).",
         "displayName": "Parent ID key",
         "simpleValueType": true,
         "name": "parentIdKey",
         "type": "TEXT"
       },
       {
-        "help": "(Optional) The value of the specified Parent ID key field for the Coveo index item that corresponds to the \"parent\" product of the viewed product/variant (e.g., <code>4db50da4-3efc-4543-8d2a-a1bf8b700e50</code>).",
+        "help": "(Optional) The value of the specified Parent ID key field for the Coveo index item that corresponds to the \"parent\" product of the viewed product/variant (e.g., \u003ccode\u003e4db50da4-3efc-4543-8d2a-a1bf8b700e50\u003c/code\u003e).",
         "displayName": "Parent ID value",
         "simpleValueType": true,
         "name": "parentIdValue",
         "type": "TEXT"
       },
       {
-        "help": "(Optional) The price of the viewed product/variant (e.g., <code>12.99</code>).",
+        "help": "(Optional) The price of the viewed product/variant (e.g., \u003ccode\u003e12.99\u003c/code\u003e).",
         "displayName": "Price",
         "simpleValueType": true,
         "name": "price",
         "type": "TEXT"
       },
       {
-        "help": "(Optional) The price of the viewed product/variant after all discounts have been applied (e.g., <code>9.09</code>).",
+        "help": "(Optional) The price of the viewed product/variant after all discounts have been applied (e.g., \u003ccode\u003e9.09\u003c/code\u003e).",
         "displayName": "Discounted price",
         "simpleValueType": true,
         "name": "discountedPrice",
@@ -354,29 +359,31 @@ ___TEMPLATE_PARAMETERS___
         ]
       },
       {
-        "help": "(Optional) The name of the viewed product/variant (e.g., <code>Chair (Blue)</code>).",
+        "help": "(Optional) The name of the viewed product/variant (e.g., \u003ccode\u003eChair (Blue)\u003c/code\u003e).",
         "displayName": "Product name",
         "simpleValueType": true,
         "name": "name",
         "type": "TEXT"
       },
       {
-        "help": "(Optional) A list of categories associated with the product/variant. Must be a JavaScript array of strings (e.g., <code>[\"products\", \"gaming\", \"mouse\"]</code>)",
+        "help": "(Optional) A list of categories associated with the product/variant. Must be a JavaScript array of strings (e.g., \u003ccode\u003e[\"products\", \"gaming\", \"mouse\"]\u003c/code\u003e)",
         "macrosInSelect": true,
         "selectItems": [],
         "displayName": "Product categories",
         "simpleValueType": true,
         "name": "categories",
-        "type": "SELECT"
+        "type": "SELECT",
+        "notSetText": "None"
       },
       {
-        "help": "(Optional) A list of brands associated with the product/variant. Must be a JavaScript array of strings (e.g., <code>[\"acme\", \"acmetech\"]</code>)",
+        "help": "(Optional) A list of brands associated with the product/variant. Must be a JavaScript array of strings (e.g., \u003ccode\u003e[\"acme\", \"acmetech\"]\u003c/code\u003e)",
         "macrosInSelect": true,
         "selectItems": [],
         "displayName": "Product brands",
         "simpleValueType": true,
         "name": "brands",
-        "type": "SELECT"
+        "type": "SELECT",
+        "notSetText": "None"
       },
       {
         "help": "(Optional) The number of product units that were added to or removed from the cart.",
@@ -438,7 +445,7 @@ ___TEMPLATE_PARAMETERS___
     "type": "GROUP",
     "subParams": [
       {
-        "help": "The language of the current page. Must be a valid <a href='https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes'>ISO-639-1 code</a> (e.g., <code>en</code>)",
+        "help": "The language of the current page. Must be a valid \u003ca href\u003d\u0027https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes\u0027\u003eISO-639-1 code\u003c/a\u003e (e.g., \u003ccode\u003een\u003c/code\u003e)",
         "valueValidators": [
           {
             "type": "NON_EMPTY"
@@ -450,21 +457,21 @@ ___TEMPLATE_PARAMETERS___
         "type": "TEXT"
       },
       {
-        "help": "(Optional) The URL of the current page. Defaults to <code>window.location</code>.",
+        "help": "(Optional) The URL of the current page. Defaults to \u003ccode\u003ewindow.location\u003c/code\u003e.",
         "displayName": "Location",
         "simpleValueType": true,
         "name": "location",
         "type": "TEXT"
       },
       {
-        "help": "(Optional) The title of the current page. Defaults to <code>document.title</code>.",
+        "help": "(Optional) The title of the current page. Defaults to \u003ccode\u003edocument.title\u003c/code\u003e.",
         "displayName": "Title",
         "simpleValueType": true,
         "name": "title",
         "type": "TEXT"
       },
       {
-        "help": "(Optional) Whether the current end user is anonymous. Allowed values are <code>true</code> and <code>false</code>. Defaults to <code>false</code>.",
+        "help": "(Optional) Whether the current end user is anonymous. Allowed values are \u003ccode\u003etrue\u003c/code\u003e and \u003ccode\u003efalse\u003c/code\u003e. Defaults to \u003ccode\u003efalse\u003c/code\u003e.",
         "displayName": "Is anonymous",
         "simpleValueType": true,
         "name": "isAnonymous",
@@ -477,7 +484,7 @@ ___TEMPLATE_PARAMETERS___
         "type": "TEXT"
       },
       {
-        "help": "(Optional) A human-readable name to display in usage analytics reports for the current user (e.g., <code>Alice Smith</code>).",
+        "help": "(Optional) A human-readable name to display in usage analytics reports for the current user (e.g., \u003ccode\u003eAlice Smith\u003c/code\u003e).",
         "enablingConditions": [
           {
             "paramName": "username",
@@ -614,7 +621,7 @@ ___TEMPLATE_PARAMETERS___
     "type": "GROUP",
     "subParams": [
       {
-        "help": "An API key granting only the <strong>Usage Analytics - Push</strong> privilege in the target Coveo Cloud organization (see <a href=\"https://docs.coveo.com/en/1718/\">Adding and Managing API Keys</a>).",
+        "help": "An API key granting only the \u003cstrong\u003eUsage Analytics - Push\u003c/strong\u003e privilege in the target Coveo Cloud organization (see \u003ca href\u003d\"https://docs.coveo.com/en/1718/\"\u003eAdding and Managing API Keys\u003c/a\u003e).",
         "valueValidators": [
           {
             "enablingConditions": [
@@ -665,7 +672,7 @@ ___TEMPLATE_PARAMETERS___
                 "paramValue": ""
               }
             ],
-            "errorMessage": "You must use the format <code>MAJOR.MINOR</code> (e.g., <code>1.0</code>)",
+            "errorMessage": "You must use the format \u003ccode\u003eMAJOR.MINOR\u003c/code\u003e (e.g., \u003ccode\u003e1.0\u003c/code\u003e)",
             "type": "REGEX"
           }
         ],
@@ -687,7 +694,7 @@ ___TEMPLATE_PARAMETERS___
         "type": "TEXT",
         "name": "ecommerce",
         "displayName": "ECommerce variable",
-        "help": "A reference to a <a href=\"https://support.google.com/tagmanager/answer/7683362?hl=en&ref_topic=9125128\">data layer variable</a> that maps to the <code>ecommerce</code> key in the data layer object (e.g., <code>{{ECommerce}})</code>.",
+        "help": "A reference to a \u003ca href\u003d\"https://support.google.com/tagmanager/answer/7683362?hl\u003den\u0026ref_topic\u003d9125128\"\u003edata layer variable\u003c/a\u003e that maps to the \u003ccode\u003eecommerce\u003c/code\u003e key in the data layer object (e.g., \u003ccode\u003e{{ECommerce}})\u003c/code\u003e.",
         "simpleValueType": true,
         "valueValidators": [
           {
@@ -700,7 +707,7 @@ ___TEMPLATE_PARAMETERS___
         "name": "visitId",
         "displayName": "Visit ID",
         "simpleValueType": true,
-        "help": "(Optional) The <a href=\"https://docs.coveo.com/en/272/\">visit ID</a>. If not specified, will be automatically set by Coveo UA. If specified, must be set to a <a href=\"https://en.wikipedia.org/wiki/Universally_unique_identifier#Version_4_(random)\">UUIDv4.</a>"
+        "help": "(Optional) The \u003ca href\u003d\"https://docs.coveo.com/en/272/\"\u003evisit ID\u003c/a\u003e. If not specified, will be automatically set by Coveo UA. If specified, must be set to a \u003ca href\u003d\"https://en.wikipedia.org/wiki/Universally_unique_identifier#Version_4_(random)\"\u003eUUIDv4.\u003c/a\u003e"
       }
     ],
     "enablingConditions": [
@@ -1212,6 +1219,10 @@ loadCoveoAnalyticsScriptIfNotLoaded(() => {
 }, () => {
   data.gtmOnFailure();
 });
+
+___TESTS___
+
+scenarios: []
 
 
 ___NOTES___
