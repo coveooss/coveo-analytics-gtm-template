@@ -1,6 +1,8 @@
 homepage: "www.coveo.com",
 documentation: "https://docs.coveo.com/en/2926",
 versions:
+  - sha: 389d18e41e2117af48d280373312f4637e038619
+    changeNotes: Removed universal tracker support
   - sha: 1f9dceb584226f704e864c3c03f97748739969ca
     changeNotes: Allow empty brands and categories
   - sha: 1dd154862382bd49f74b909988e73033a1dae0c6
