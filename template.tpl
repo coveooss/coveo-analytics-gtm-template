@@ -56,10 +56,6 @@ ___TEMPLATE_PARAMETERS___
       {
         "displayValue": "Initialize the Coveo Analytics script",
         "value": "load"
-      },
-      {
-        "value": "universal",
-        "displayValue": "Send Universal Tracker Event"
       }
     ],
     "displayName": "Action",
@@ -683,42 +679,212 @@ ___TEMPLATE_PARAMETERS___
         "valueHint": "1.0"
       }
     ]
-  },
-  {
-    "type": "GROUP",
-    "name": "Universal Tracker Configuration",
-    "displayName": "Universal Tracker Configuration",
-    "groupStyle": "ZIPPY_OPEN",
-    "subParams": [
-      {
-        "type": "TEXT",
-        "name": "ecommerce",
-        "displayName": "ECommerce variable",
-        "help": "A reference to a \u003ca href\u003d\"https://support.google.com/tagmanager/answer/7683362?hl\u003den\u0026ref_topic\u003d9125128\"\u003edata layer variable\u003c/a\u003e that maps to the \u003ccode\u003eecommerce\u003c/code\u003e key in the data layer object (e.g., \u003ccode\u003e{{ECommerce}})\u003c/code\u003e.",
-        "simpleValueType": true,
-        "valueValidators": [
-          {
-            "type": "NON_EMPTY"
-          }
-        ]
-      },
-      {
-        "type": "TEXT",
-        "name": "visitId",
-        "displayName": "Visit ID",
-        "simpleValueType": true,
-        "help": "(Optional) The \u003ca href\u003d\"https://docs.coveo.com/en/272/\"\u003evisit ID\u003c/a\u003e. If not specified, will be automatically set by Coveo UA. If specified, must be set to a \u003ca href\u003d\"https://en.wikipedia.org/wiki/Universally_unique_identifier#Version_4_(random)\"\u003eUUIDv4.\u003c/a\u003e"
-      }
-    ],
-    "enablingConditions": [
-      {
-        "paramName": "eventType",
-        "paramValue": "universal",
-        "type": "EQUALS"
-      }
-    ]
   }
 ]
+
+
+___SANDBOXED_JS_FOR_WEB_TEMPLATE___
+
+const log = require('logToConsole');
+const isLoadEventType = () => data.eventType === "load";
+
+const validateVariablesToLoadScript = () => {
+  const COMMON_ERROR_MESSAGE = "Coveo Analytics Script could not be initialized.\n";
+
+  const missingKeys = ['analyticsEndpoint', 'apiKey'].filter(key => !data[key]);
+  const hasMissingKeys = missingKeys.length > 0;
+  if (missingKeys.length > 0) {
+    if (isLoadEventType()) {
+      log(COMMON_ERROR_MESSAGE + "The \"Configuration\" section is missing the following keys: " + missingKeys.join(", "));
+    } else {
+      log(COMMON_ERROR_MESSAGE + "You must either provide the variables in the \"Configuration\" section to the first Coveo Analytics tag or add the \"Load\" event type before this tag.");
+    }
+    return false;
+  }
+  
+  return true;
+};
+
+const loadCoveoAnalyticsScript = (onSuccess) => {
+  const injectScript = require("injectScript");
+  const setInWindow = require("setInWindow");
+  
+  const createArgumentsQueue = require('createArgumentsQueue');
+  const coveoua = createArgumentsQueue('coveoua', 'coveoua.q');
+  const getTimestamp = require('getTimestamp');
+  setInWindow('coveoua.t', getTimestamp(), true);
+  
+  coveoua("init", data.apiKey, data.analyticsEndpoint);
+  coveoua("onLoad", function() {
+    log('Coveo Analytics Initialized');
+  });
+  
+  const scriptVersion = data.scriptVersion || "1.0";
+  const url = "https://static.cloud.coveo.com/coveo.analytics.js/" + scriptVersion + "/coveoua.js";
+  injectScript(url, onSuccess, data.gtmOnFailure, url);
+};
+  
+const loadCoveoAnalyticsScriptIfNotLoaded = (onSuccess, onFailure) => {
+  const copyFromWindow = require("copyFromWindow");
+  const coveoanalytics = copyFromWindow("coveoanalytics");
+  
+  if (!coveoanalytics) {
+    if (!validateVariablesToLoadScript()) {
+      onFailure();
+    }
+    loadCoveoAnalyticsScript(onSuccess);
+  } else {
+    onSuccess();
+  }
+};
+
+const addToObject = function(obj) {
+  for (let index in arguments) {
+    const obj2 = arguments[index];
+    for (let key in obj2) {
+      if (obj2.hasOwnProperty(key)) {
+        obj[key] = obj2[key];
+      }
+    }
+  }
+  return obj;
+};
+
+const generateCustomData = () => {
+  const ensureObjectHasContextPrefix = (obj) => {
+    const contextPrefix = "context_";
+    const newObj = {};
+    for (let key in obj) {
+      const newKey = key.indexOf(contextPrefix) === 0 ? key : contextPrefix + key;
+      newObj[newKey] = obj[key];
+    }
+    return newObj;
+  };
+
+  const rowIsForAll = (obj) => obj.purpose === 'all';
+  const rowIsForUA = (obj) => obj.purpose === 'usageanalytics' || rowIsForAll(obj);
+  const rowIsForML = (obj) => obj.purpose === 'ml' || rowIsForAll(obj);
+
+  const customDataObject = {};
+
+  if (!!data.customDataTable && data.customDataTable.length > 0) {
+    const makeSafeTableMap = (table) => {
+      const makeTableMap = require('makeTableMap');
+      return table ? makeTableMap(table, 'key', 'value') : {};
+    };
+
+    const objForUsageAnalytics = makeSafeTableMap(data.customDataTable.filter(rowIsForUA));
+    const objForContext = ensureObjectHasContextPrefix(
+      makeSafeTableMap(data.customDataTable.filter(rowIsForML))
+    );
+    addToObject(customDataObject, 
+                objForUsageAnalytics,
+                objForContext);
+  }
+
+  if (!!data.customDataObjects && data.customDataObjects.length > 0) {
+    const getValidCustomDataObjectsFromArray = (objects) => {
+      return objects.map(row => row.object).filter(obj => typeof obj === 'object');
+    };
+
+    getValidCustomDataObjectsFromArray(data.customDataObjects.filter(rowIsForUA))
+      .forEach(obj => addToObject(customDataObject, obj));
+    getValidCustomDataObjectsFromArray(data.customDataObjects.filter(rowIsForML))
+      .map(ensureObjectHasContextPrefix)
+      .forEach(obj => addToObject(customDataObject, obj));
+  }
+  
+  return customDataObject;
+};
+
+const eventTypeMap = {
+  view: "view",
+  custom: "custom",
+  detailView: "custom",
+  addToCart: "custom"
+};
+
+const eventDataForTypeMap = {
+  view: {
+    contentIdKey: data.contentIdKey,
+    contentIdValue: data.contentIdValue,
+    customData: {}
+  },
+  custom: {
+    eventType: data.customEventType,
+    eventValue: data.customEventValue,
+    customData: {}
+  },
+  detailView: {
+    eventType: "detailView",
+    eventValue: data.detailContentIdValue,
+    customData: {
+      contentIdKey: data.detailContentIdKey,
+      contentIdValue: data.detailContentIdValue,
+      parentIdKey: data.parentIdKey,
+      parentIdValue: data.parentIdValue,
+      price: data.price,
+      discountedPrice: data.discountedPrice,
+      viewDuration: data.viewDuration,
+      actionCause: data.actionCause,
+      name: data.name,
+      categories: data.categories,
+      brands: data.brands
+    }
+  },
+  addToCart: {
+    eventType: "addToCart",
+    eventValue: data.detailContentIdValue,
+    customData: {
+      contentIdKey: data.detailContentIdKey,
+      contentIdValue: data.detailContentIdValue,
+      parentIdKey: data.parentIdKey,
+      parentIdValue: data.parentIdValue,
+      price: data.price,
+      discountedPrice: data.discountedPrice,
+      quantity: data.quantity,
+      cartId: data.cartId,
+      name: data.name,
+      categories: data.categories,
+      brands: data.brands
+    }
+  }
+};
+
+const logCoveoAnalyticsEvent = () => {
+  const eventDataForType = eventDataForTypeMap[data.eventType];
+  addToObject(eventDataForType.customData, generateCustomData());
+
+  const getUrl = require("getUrl");
+  const getReferrerUrl = require("getReferrerUrl");
+  const readTitle = require("readTitle");
+  const eventData = {
+    location: data.location || getUrl(),
+    referrer: data.referrer || getReferrerUrl(),
+    language: data.language,
+    title: data.title || readTitle(),
+    anonymous: data.isAnonymous,
+    username: data.username,
+    userDisplayName: data.userDisplayName
+  };
+
+  addToObject(eventData, eventDataForType);
+
+  log('Coveo Analytics Data =', eventData);
+
+  const createArgumentsQueue = require('createArgumentsQueue');
+  const coveoua = createArgumentsQueue('coveoua', 'coveoua.q');
+  coveoua("send", eventTypeMap[data.eventType], eventData);
+};
+
+loadCoveoAnalyticsScriptIfNotLoaded(() => {
+  if (!isLoadEventType()) {
+     logCoveoAnalyticsEvent();
+  }
+  data.gtmOnSuccess();
+}, () => {
+  data.gtmOnFailure();
+});
 
 
 ___WEB_PERMISSIONS___
@@ -1012,214 +1178,6 @@ ___WEB_PERMISSIONS___
 ]
 
 
-___SANDBOXED_JS_FOR_WEB_TEMPLATE___
-
-const log = require('logToConsole');
-const isLoadEventType = () => data.eventType === "load";
-
-const validateVariablesToLoadScript = () => {
-  const COMMON_ERROR_MESSAGE = "Coveo Analytics Script could not be initialized.\n";
-
-  const missingKeys = ['analyticsEndpoint', 'apiKey'].filter(key => !data[key]);
-  const hasMissingKeys = missingKeys.length > 0;
-  if (missingKeys.length > 0) {
-    if (isLoadEventType()) {
-      log(COMMON_ERROR_MESSAGE + "The \"Configuration\" section is missing the following keys: " + missingKeys.join(", "));
-    } else {
-      log(COMMON_ERROR_MESSAGE + "You must either provide the variables in the \"Configuration\" section to the first Coveo Analytics tag or add the \"Load\" event type before this tag.");
-    }
-    return false;
-  }
-  
-  return true;
-};
-
-const loadCoveoAnalyticsScript = (onSuccess) => {
-  const injectScript = require("injectScript");
-  const setInWindow = require("setInWindow");
-  
-  const createArgumentsQueue = require('createArgumentsQueue');
-  const coveoua = createArgumentsQueue('coveoua', 'coveoua.q');
-  const getTimestamp = require('getTimestamp');
-  setInWindow('coveoua.t', getTimestamp(), true);
-  
-  coveoua("init", data.apiKey, data.analyticsEndpoint);
-  coveoua("onLoad", function() {
-    log('Coveo Analytics Initialized');
-  });
-  
-  const scriptVersion = data.scriptVersion || "1.0";
-  const url = "https://static.cloud.coveo.com/coveo.analytics.js/" + scriptVersion + "/coveoua.js";
-  injectScript(url, onSuccess, data.gtmOnFailure, url);
-};
-  
-const loadCoveoAnalyticsScriptIfNotLoaded = (onSuccess, onFailure) => {
-  const copyFromWindow = require("copyFromWindow");
-  const coveoanalytics = copyFromWindow("coveoanalytics");
-  
-  if (!coveoanalytics) {
-    if (!validateVariablesToLoadScript()) {
-      onFailure();
-    }
-    loadCoveoAnalyticsScript(onSuccess);
-  } else {
-    onSuccess();
-  }
-};
-
-const addToObject = function(obj) {
-  for (let index in arguments) {
-    const obj2 = arguments[index];
-    for (let key in obj2) {
-      if (obj2.hasOwnProperty(key)) {
-        obj[key] = obj2[key];
-      }
-    }
-  }
-  return obj;
-};
-
-const generateCustomData = () => {
-  const ensureObjectHasContextPrefix = (obj) => {
-    const contextPrefix = "context_";
-    const newObj = {};
-    for (let key in obj) {
-      const newKey = key.indexOf(contextPrefix) === 0 ? key : contextPrefix + key;
-      newObj[newKey] = obj[key];
-    }
-    return newObj;
-  };
-
-  const rowIsForAll = (obj) => obj.purpose === 'all';
-  const rowIsForUA = (obj) => obj.purpose === 'usageanalytics' || rowIsForAll(obj);
-  const rowIsForML = (obj) => obj.purpose === 'ml' || rowIsForAll(obj);
-
-  const customDataObject = {};
-
-  if (!!data.customDataTable && data.customDataTable.length > 0) {
-    const makeSafeTableMap = (table) => {
-      const makeTableMap = require('makeTableMap');
-      return table ? makeTableMap(table, 'key', 'value') : {};
-    };
-
-    const objForUsageAnalytics = makeSafeTableMap(data.customDataTable.filter(rowIsForUA));
-    const objForContext = ensureObjectHasContextPrefix(
-      makeSafeTableMap(data.customDataTable.filter(rowIsForML))
-    );
-    addToObject(customDataObject, 
-                objForUsageAnalytics,
-                objForContext);
-  }
-
-  if (!!data.customDataObjects && data.customDataObjects.length > 0) {
-    const getValidCustomDataObjectsFromArray = (objects) => {
-      return objects.map(row => row.object).filter(obj => typeof obj === 'object');
-    };
-
-    getValidCustomDataObjectsFromArray(data.customDataObjects.filter(rowIsForUA))
-      .forEach(obj => addToObject(customDataObject, obj));
-    getValidCustomDataObjectsFromArray(data.customDataObjects.filter(rowIsForML))
-      .map(ensureObjectHasContextPrefix)
-      .forEach(obj => addToObject(customDataObject, obj));
-  }
-  
-  return customDataObject;
-};
-
-const eventTypeMap = {
-  view: "view",
-  custom: "custom",
-  detailView: "custom",
-  addToCart: "custom",
-  universal: "collecttag"
-};
-
-const eventDataForTypeMap = {
-  view: {
-    contentIdKey: data.contentIdKey,
-    contentIdValue: data.contentIdValue,
-    customData: {}
-  },
-  custom: {
-    eventType: data.customEventType,
-    eventValue: data.customEventValue,
-    customData: {}
-  },
-  detailView: {
-    eventType: "detailView",
-    eventValue: data.detailContentIdValue,
-    customData: {
-      contentIdKey: data.detailContentIdKey,
-      contentIdValue: data.detailContentIdValue,
-      parentIdKey: data.parentIdKey,
-      parentIdValue: data.parentIdValue,
-      price: data.price,
-      discountedPrice: data.discountedPrice,
-      viewDuration: data.viewDuration,
-      actionCause: data.actionCause,
-      name: data.name,
-      categories: data.categories,
-      brands: data.brands
-    }
-  },
-  addToCart: {
-    eventType: "addToCart",
-    eventValue: data.detailContentIdValue,
-    customData: {
-      contentIdKey: data.detailContentIdKey,
-      contentIdValue: data.detailContentIdValue,
-      parentIdKey: data.parentIdKey,
-      parentIdValue: data.parentIdValue,
-      price: data.price,
-      discountedPrice: data.discountedPrice,
-      quantity: data.quantity,
-      cartId: data.cartId,
-      name: data.name,
-      categories: data.categories,
-      brands: data.brands
-    }
-  },
-  universal: {
-    cid: data.visitId,
-    ecommerce: data.ecommerce
-  }
-};
-
-const logCoveoAnalyticsEvent = () => {
-  const eventDataForType = eventDataForTypeMap[data.eventType];
-  addToObject(eventDataForType.customData, generateCustomData());
-
-  const getUrl = require("getUrl");
-  const getReferrerUrl = require("getReferrerUrl");
-  const readTitle = require("readTitle");
-  const eventData = {
-    location: data.location || getUrl(),
-    referrer: data.referrer || getReferrerUrl(),
-    language: data.language,
-    title: data.title || readTitle(),
-    anonymous: data.isAnonymous,
-    username: data.username,
-    userDisplayName: data.userDisplayName
-  };
-
-  addToObject(eventData, eventDataForType);
-
-  log('Coveo Analytics Data =', eventData);
-
-  const createArgumentsQueue = require('createArgumentsQueue');
-  const coveoua = createArgumentsQueue('coveoua', 'coveoua.q');
-  coveoua("send", eventTypeMap[data.eventType], eventData);
-};
-
-loadCoveoAnalyticsScriptIfNotLoaded(() => {
-  if (!isLoadEventType()) {
-     logCoveoAnalyticsEvent();
-  }
-  data.gtmOnSuccess();
-}, () => {
-  data.gtmOnFailure();
-});
-
 ___TESTS___
 
 scenarios: []
@@ -1228,3 +1186,5 @@ scenarios: []
 ___NOTES___
 
 Created on 9/16/2019, 10:11:06 AM
+
+
