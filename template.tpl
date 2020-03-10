@@ -38,20 +38,16 @@ ___TEMPLATE_PARAMETERS___
     "macrosInSelect": false,
     "selectItems": [
       {
-        "displayValue": "Log custom event",
+        "displayValue": "Send custom Coveo event",
         "value": "custom"
       },
       {
-        "displayValue": "Log page view event",
+        "displayValue": "Send page view",
         "value": "view"
       },
       {
-        "displayValue": "Log product detail view event",
-        "value": "detailView"
-      },
-      {
-        "value": "addToCart",
-        "displayValue": "Log add to cart event"
+        "value": "event",
+        "displayValue": "Send event"
       },
       {
         "displayValue": "Initialize the Coveo Analytics script",
@@ -77,7 +73,7 @@ ___TEMPLATE_PARAMETERS___
           }
         ],
         "displayName": "Custom events can be leveraged in Coveo UA reports and by Coveo ML Event Recommendation models.",
-        "name": "Custom Event Type Description",
+        "name": "Custom Coveo Event Type Description",
         "type": "LABEL"
       },
       {
@@ -105,86 +101,16 @@ ___TEMPLATE_PARAMETERS___
         "type": "LABEL"
       },
       {
-        "enablingConditions": [
-          {
-            "paramName": "eventType",
-            "type": "EQUALS",
-            "paramValue": "detailView"
-          }
-        ],
-        "displayName": "Product detail view events are leveraged by Coveo ML Commerce Recommendation models.",
-        "name": "Detail View Event Type Description",
-        "type": "LABEL"
-      },
-      {
         "type": "LABEL",
-        "name": "Add To Cart Event Type Description",
-        "displayName": "Add to cart events are leveraged by Coveo ML Event Recommendation models",
+        "name": "Event Type Description",
+        "displayName": "Events are used to send the data accumulated in the data layer or with other commands on the page.",
         "enablingConditions": [
           {
             "paramName": "eventType",
-            "paramValue": "addToCart",
+            "paramValue": "event",
             "type": "EQUALS"
           }
         ]
-      }
-    ]
-  },
-  {
-    "enablingConditions": [
-      {
-        "paramName": "eventType",
-        "type": "EQUALS",
-        "paramValue": "view"
-      }
-    ],
-    "displayName": "Event metadata",
-    "name": "View Event Metadata",
-    "groupStyle": "ZIPPY_OPEN",
-    "type": "GROUP",
-    "subParams": [
-      {
-        "help": "The name of a field that can uniquely and permanently map the viewed page to an item in the Coveo index (e.g., \u003ccode\u003epermanentid\u003c/code\u003e).",
-        "valueValidators": [
-          {
-            "type": "NON_EMPTY"
-          }
-        ],
-        "displayName": "Content ID key",
-        "simpleValueType": true,
-        "name": "contentIdKey",
-        "type": "TEXT"
-      },
-      {
-        "help": "The value of the specified Content ID key field for the Coveo index item corresponding to the viewed page (e.g., \u003ccode\u003ebf79a5b0-b85a-448e-875c-3b46aafe1bea\u003c/code\u003e).",
-        "valueValidators": [
-          {
-            "type": "NON_EMPTY"
-          }
-        ],
-        "displayName": "Content ID value",
-        "simpleValueType": true,
-        "name": "contentIdValue",
-        "type": "TEXT"
-      },
-      {
-        "notSetText": "",
-        "help": "(Optional) The type of content being viewed (see \u003ca href\u003d\"https://docs.coveo.com/en/1744/\"\u003eCoveo Machine Learning Recommendation Content Types\u003c/a\u003e).",
-        "macrosInSelect": true,
-        "selectItems": [
-          {
-            "displayValue": "Articles",
-            "value": "articles"
-          },
-          {
-            "displayValue": "Products",
-            "value": "products"
-          }
-        ],
-        "displayName": "Content type",
-        "simpleValueType": true,
-        "name": "contentType",
-        "type": "SELECT"
       }
     ]
   },
@@ -232,207 +158,7 @@ ___TEMPLATE_PARAMETERS___
       {
         "paramName": "eventType",
         "type": "EQUALS",
-        "paramValue": "detailView"
-      },
-      {
-        "paramName": "eventType",
-        "type": "EQUALS",
-        "paramValue": "addToCart"
-      }
-    ],
-    "displayName": "Event metadata",
-    "name": "E-Commerce Event Metadata",
-    "groupStyle": "ZIPPY_OPEN",
-    "type": "GROUP",
-    "subParams": [
-      {
-        "help": "The name of a field that can uniquely and permanently map the viewed product/variant back to an item in the Coveo index (e.g., \u003ccode\u003epermanentid\u003c/code\u003e).",
-        "valueValidators": [
-          {
-            "enablingConditions": [
-              {
-                "paramName": "eventType",
-                "type": "EQUALS",
-                "paramValue": "detailView"
-              }
-            ],
-            "type": "NON_EMPTY"
-          }
-        ],
-        "displayName": "Content ID key",
-        "simpleValueType": true,
-        "name": "detailContentIdKey",
-        "type": "TEXT"
-      },
-      {
-        "help": "The value of the specified Content ID key field for the Coveo index item that corresponds to the viewed product/variant (e.g., \u003ccode\u003ebf79a5b0-b85a-448e-875c-3b46aafe1bea\u003c/code\u003e).",
-        "valueValidators": [
-          {
-            "type": "NON_EMPTY"
-          }
-        ],
-        "displayName": "Content ID Value",
-        "simpleValueType": true,
-        "name": "detailContentIdValue",
-        "type": "TEXT"
-      },
-      {
-        "help": "(Optional) The name of a field that can uniquely and permanently identify the Coveo index item corresponding to the \"parent\" product, which regroups all other variants of the viewed product/variant (e.g., \u003ccode\u003eparentid\u003c/code\u003e).",
-        "displayName": "Parent ID key",
-        "simpleValueType": true,
-        "name": "parentIdKey",
-        "type": "TEXT"
-      },
-      {
-        "help": "(Optional) The value of the specified Parent ID key field for the Coveo index item that corresponds to the \"parent\" product of the viewed product/variant (e.g., \u003ccode\u003e4db50da4-3efc-4543-8d2a-a1bf8b700e50\u003c/code\u003e).",
-        "displayName": "Parent ID value",
-        "simpleValueType": true,
-        "name": "parentIdValue",
-        "type": "TEXT"
-      },
-      {
-        "help": "(Optional) The price of the viewed product/variant (e.g., \u003ccode\u003e12.99\u003c/code\u003e).",
-        "displayName": "Price",
-        "simpleValueType": true,
-        "name": "price",
-        "type": "TEXT"
-      },
-      {
-        "help": "(Optional) The price of the viewed product/variant after all discounts have been applied (e.g., \u003ccode\u003e9.09\u003c/code\u003e).",
-        "displayName": "Discounted price",
-        "simpleValueType": true,
-        "name": "discountedPrice",
-        "type": "TEXT"
-      },
-      {
-        "help": "(Optional) The amount of time the end user spent viewing the product/variant.",
-        "displayName": "View duration",
-        "simpleValueType": true,
-        "name": "viewDuration",
-        "type": "TEXT",
-        "valueUnit": "seconds",
-        "valueHint": "10.00",
-        "enablingConditions": [
-          {
-            "paramName": "eventType",
-            "paramValue": "detailView",
-            "type": "EQUALS"
-          }
-        ]
-      },
-      {
-        "notSetText": "None",
-        "help": "(Optional) Information pertaining to the way the end user viewed the product/variant.",
-        "macrosInSelect": true,
-        "selectItems": [
-          {
-            "displayValue": "View",
-            "value": "view"
-          },
-          {
-            "displayValue": "Quickview (e.g., modal)",
-            "value": "quickview"
-          },
-          {
-            "displayValue": "Screenshot",
-            "value": "screenshot"
-          },
-          {
-            "displayValue": "Video",
-            "value": "video"
-          }
-        ],
-        "displayName": "Action cause",
-        "simpleValueType": true,
-        "name": "actionCause",
-        "type": "SELECT",
-        "enablingConditions": [
-          {
-            "paramName": "eventType",
-            "paramValue": "detailView",
-            "type": "EQUALS"
-          }
-        ]
-      },
-      {
-        "help": "(Optional) The name of the viewed product/variant (e.g., \u003ccode\u003eChair (Blue)\u003c/code\u003e).",
-        "displayName": "Product name",
-        "simpleValueType": true,
-        "name": "name",
-        "type": "TEXT"
-      },
-      {
-        "help": "(Optional) A list of categories associated with the product/variant. Must be a JavaScript array of strings (e.g., \u003ccode\u003e[\"products\", \"gaming\", \"mouse\"]\u003c/code\u003e)",
-        "macrosInSelect": true,
-        "selectItems": [],
-        "displayName": "Product categories",
-        "simpleValueType": true,
-        "name": "categories",
-        "type": "SELECT",
-        "notSetText": "None"
-      },
-      {
-        "help": "(Optional) A list of brands associated with the product/variant. Must be a JavaScript array of strings (e.g., \u003ccode\u003e[\"acme\", \"acmetech\"]\u003c/code\u003e)",
-        "macrosInSelect": true,
-        "selectItems": [],
-        "displayName": "Product brands",
-        "simpleValueType": true,
-        "name": "brands",
-        "type": "SELECT",
-        "notSetText": "None"
-      },
-      {
-        "help": "(Optional) The number of product units that were added to or removed from the cart.",
-        "valueValidators": [],
-        "enablingConditions": [
-          {
-            "paramName": "eventType",
-            "type": "EQUALS",
-            "paramValue": "addToCart"
-          }
-        ],
-        "displayName": "Quantity",
-        "simpleValueType": true,
-        "name": "quantity",
-        "type": "TEXT"
-      },
-      {
-        "type": "TEXT",
-        "name": "cartId",
-        "displayName": "Cart ID",
-        "simpleValueType": true,
-        "help": "(Optional) The unique identifier of the target cart.",
-        "enablingConditions": [
-          {
-            "paramName": "eventType",
-            "paramValue": "addToCart",
-            "type": "EQUALS"
-          }
-        ]
-      }
-    ]
-  },
-  {
-    "enablingConditions": [
-      {
-        "paramName": "eventType",
-        "type": "EQUALS",
         "paramValue": "custom"
-      },
-      {
-        "paramName": "eventType",
-        "type": "EQUALS",
-        "paramValue": "view"
-      },
-      {
-        "paramName": "eventType",
-        "type": "EQUALS",
-        "paramValue": "detailView"
-      },
-      {
-        "paramName": "eventType",
-        "type": "EQUALS",
-        "paramValue": "addToCart"
       }
     ],
     "displayName": "Document metadata",
@@ -501,21 +227,6 @@ ___TEMPLATE_PARAMETERS___
         "paramName": "eventType",
         "type": "EQUALS",
         "paramValue": "custom"
-      },
-      {
-        "paramName": "eventType",
-        "type": "EQUALS",
-        "paramValue": "view"
-      },
-      {
-        "paramName": "eventType",
-        "type": "EQUALS",
-        "paramValue": "detailView"
-      },
-      {
-        "paramName": "eventType",
-        "type": "EQUALS",
-        "paramValue": "addToCart"
       }
     ],
     "displayName": "Custom metadata (leverageable by Coveo ML and in Coveo UA reports)",
@@ -659,7 +370,7 @@ ___TEMPLATE_PARAMETERS___
         "valueValidators": [
           {
             "args": [
-              "\\d\\.\\d"
+              "\\d(\\.\\d)?(\\.\\d)?(\\-[a-z0-9]+)?"
             ],
             "enablingConditions": [
               {
@@ -676,7 +387,7 @@ ___TEMPLATE_PARAMETERS___
         "simpleValueType": true,
         "name": "scriptVersion",
         "type": "TEXT",
-        "valueHint": "1.0"
+        "valueHint": "2.0"
       }
     ]
   }
@@ -701,33 +412,33 @@ const validateVariablesToLoadScript = () => {
     }
     return false;
   }
-  
+
   return true;
 };
 
 const loadCoveoAnalyticsScript = (onSuccess) => {
   const injectScript = require("injectScript");
   const setInWindow = require("setInWindow");
-  
+
   const createArgumentsQueue = require('createArgumentsQueue');
   const coveoua = createArgumentsQueue('coveoua', 'coveoua.q');
   const getTimestamp = require('getTimestamp');
   setInWindow('coveoua.t', getTimestamp(), true);
-  
+
   coveoua("init", data.apiKey, data.analyticsEndpoint);
   coveoua("onLoad", function() {
     log('Coveo Analytics Initialized');
   });
-  
-  const scriptVersion = data.scriptVersion || "1.0";
+
+  const scriptVersion = data.scriptVersion || "2";
   const url = "https://static.cloud.coveo.com/coveo.analytics.js/" + scriptVersion + "/coveoua.js";
   injectScript(url, onSuccess, data.gtmOnFailure, url);
 };
-  
+
 const loadCoveoAnalyticsScriptIfNotLoaded = (onSuccess, onFailure) => {
   const copyFromWindow = require("copyFromWindow");
   const coveoanalytics = copyFromWindow("coveoanalytics");
-  
+
   if (!coveoanalytics) {
     if (!validateVariablesToLoadScript()) {
       onFailure();
@@ -777,7 +488,7 @@ const generateCustomData = () => {
     const objForContext = ensureObjectHasContextPrefix(
       makeSafeTableMap(data.customDataTable.filter(rowIsForML))
     );
-    addToObject(customDataObject, 
+    addToObject(customDataObject,
                 objForUsageAnalytics,
                 objForContext);
   }
@@ -793,62 +504,33 @@ const generateCustomData = () => {
       .map(ensureObjectHasContextPrefix)
       .forEach(obj => addToObject(customDataObject, obj));
   }
-  
+
   return customDataObject;
 };
 
 const eventTypeMap = {
-  view: "view",
-  custom: "custom",
-  detailView: "custom",
-  addToCart: "custom"
+  custom: "custom"
 };
 
 const eventDataForTypeMap = {
-  view: {
-    contentIdKey: data.contentIdKey,
-    contentIdValue: data.contentIdValue,
-    customData: {}
-  },
   custom: {
     eventType: data.customEventType,
     eventValue: data.customEventValue,
     customData: {}
-  },
-  detailView: {
-    eventType: "detailView",
-    eventValue: data.detailContentIdValue,
-    customData: {
-      contentIdKey: data.detailContentIdKey,
-      contentIdValue: data.detailContentIdValue,
-      parentIdKey: data.parentIdKey,
-      parentIdValue: data.parentIdValue,
-      price: data.price,
-      discountedPrice: data.discountedPrice,
-      viewDuration: data.viewDuration,
-      actionCause: data.actionCause,
-      name: data.name,
-      categories: data.categories,
-      brands: data.brands
-    }
-  },
-  addToCart: {
-    eventType: "addToCart",
-    eventValue: data.detailContentIdValue,
-    customData: {
-      contentIdKey: data.detailContentIdKey,
-      contentIdValue: data.detailContentIdValue,
-      parentIdKey: data.parentIdKey,
-      parentIdValue: data.parentIdValue,
-      price: data.price,
-      discountedPrice: data.discountedPrice,
-      quantity: data.quantity,
-      cartId: data.cartId,
-      name: data.name,
-      categories: data.categories,
-      brands: data.brands
-    }
   }
+};
+
+const measurementProtocolTypeMap = {
+  view: 'pageview',
+  event: 'event'
+};
+
+const logWithMeasurementProtocol = () => {
+  log('Coveo Using Measurement Protocol');
+
+  const createArgumentsQueue = require('createArgumentsQueue');
+  const coveoua = createArgumentsQueue('coveoua', 'coveoua.q');
+  coveoua("send", measurementProtocolTypeMap[data.eventType]);
 };
 
 const logCoveoAnalyticsEvent = () => {
@@ -879,13 +561,16 @@ const logCoveoAnalyticsEvent = () => {
 
 loadCoveoAnalyticsScriptIfNotLoaded(() => {
   if (!isLoadEventType()) {
-     logCoveoAnalyticsEvent();
+    if (eventDataForTypeMap[data.eventType]) {
+     	logCoveoAnalyticsEvent();
+    } else {
+      logWithMeasurementProtocol();
+    }
   }
   data.gtmOnSuccess();
 }, () => {
   data.gtmOnFailure();
 });
-
 
 ___WEB_PERMISSIONS___
 
