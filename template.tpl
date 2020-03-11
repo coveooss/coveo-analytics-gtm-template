@@ -526,10 +526,45 @@ const measurementProtocolTypeMap = {
 };
 
 const logWithMeasurementProtocol = () => {
-  log('Coveo Using Measurement Protocol');
+  const copyFromDataLayer = require("copyFromDataLayer");
+  const event = copyFromDataLayer('event');
+  const ecommerce = copyFromDataLayer('ecommerce');
 
   const createArgumentsQueue = require('createArgumentsQueue');
   const coveoua = createArgumentsQueue('coveoua', 'coveoua.q');
+
+  if (ecommerce) {
+    const setAction = (action, metadata) => !!metadata ? coveoua("ec:setAction", action, metadata) : coveoua("ec:setAction", action);
+    const addAllProductsIfDefined = (products) => !!products && products.forEach(product => coveoua("ec:addProduct", product));
+    const addAllImpressionsIfDefined = (impressions) => !!impressions && impressions.forEach(impression => coveoua("ec:addImpression", impression));
+
+    if (ecommerce.currencyCode) {
+      coveoua("set", "currencyCode", ecommerce.currencyCode); 
+    }
+
+    const eventMapping = {
+      "gtm.load": ["refund", "purchase", "detail"],
+      "gtm.dom": ["refund", "purchase", "detail"],
+      "addToCart": ["add"],
+      "removeFromCart": ["remove"],
+      "checkout": ["checkout"],
+      "checkoutOption": ["checkout_option"],
+      "productClick": ["click"]
+    };
+
+    const eventsToTest = eventMapping[event];
+    const eventsFoundForType = !!eventsToTest && eventsToTest.filter(e => ecommerce.hasOwnProperty(e));
+    const ecommerceDataLayerToUse = eventsFoundForType.length > 0 && ecommerce[eventsFoundForType[0]];
+
+    if (ecommerceDataLayerToUse) {
+      addAllImpressionsIfDefined(ecommerce.impressions);
+      addAllProductsIfDefined(ecommerceDataLayerToUse.products);
+      setAction(eventsFoundForType[0], ecommerceDataLayerToUse.actionField);
+    }
+  }
+
+  log('Coveo Using Measurement Protocol');
+
   coveoua("send", measurementProtocolTypeMap[data.eventType]);
 };
 
@@ -561,16 +596,17 @@ const logCoveoAnalyticsEvent = () => {
 
 loadCoveoAnalyticsScriptIfNotLoaded(() => {
   if (!isLoadEventType()) {
-    if (eventDataForTypeMap[data.eventType]) {
+     if (eventDataForTypeMap[data.eventType]) {
      	logCoveoAnalyticsEvent();
-    } else {
-      logWithMeasurementProtocol();
-    }
+     } else {
+      	logWithMeasurementProtocol(); 
+     }
   }
   data.gtmOnSuccess();
 }, () => {
   data.gtmOnFailure();
 });
+
 
 ___WEB_PERMISSIONS___
 
@@ -859,13 +895,110 @@ ___WEB_PERMISSIONS___
       "isEditedByUser": true
     },
     "isRequired": true
+  },
+  {
+    "instance": {
+      "key": {
+        "publicId": "read_data_layer",
+        "versionId": "1"
+      },
+      "param": [
+        {
+          "key": "keyPatterns",
+          "value": {
+            "type": 2,
+            "listItem": [
+              {
+                "type": 1,
+                "string": "ecommerce"
+              },
+              {
+                "type": 1,
+                "string": "event"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    "clientAnnotations": {
+      "isEditedByUser": true
+    },
+    "isRequired": true
   }
 ]
 
 
 ___TESTS___
 
-scenarios: []
+scenarios:
+- name: Throws when logging without init
+  code: |-
+    const mockData = {
+      "eventType": "view"
+    };
+
+    runCode(mockData);
+
+    assertApi('gtmOnFailure').wasCalled();
+- name: Sends a Page View event
+  code: |-
+    givenScriptInitialized();
+    givenMockDataLayer({
+      "event": "gtm.dom",
+      "ecommerce": {}
+    });
+
+    const mockData = {
+      "eventType": "view"
+    };
+
+    runCode(mockData);
+
+    assertApi('gtmOnSuccess').wasCalled();
+    assertEventWasSentWith("pageview");
+- name: Adds Enhanced Commmerce Products with a Detail Page View event
+  code: "const product = {\n   \"productName\": \"wow\" \n};\n\ngivenScriptInitialized();\n\
+    \ngivenMockDataLayer({\n  \"event\": \"gtm.dom\",\n  \"ecommerce\": {\n  \t\"\
+    detail\": {\n      \"products\": [product]\n    }\n  }\n});\n\nconst mockData\
+    \ = {\n  \"eventType\": \"view\"\n};\n\nrunCode(mockData);\n\nassertApi('gtmOnSuccess').wasCalled();\n\
+    assertActionWasQueued([\"ec:setAction\", \"detail\"]);\nassertActionWasQueued([\"\
+    ec:addProduct\", product]);\nassertEventWasSentWith(\"pageview\");"
+- name: Allows sending a Page View without ecommerce in data layer
+  code: |-
+    givenScriptInitialized();
+    givenMockDataLayer({
+      "event": "gtm.dom",
+    });
+
+    const mockData = {
+      "eventType": "view"
+    };
+
+    runCode(mockData);
+
+    assertApi('gtmOnSuccess').wasCalled();
+    assertEventWasSentWith("pageview");
+- name: Propagates the ECommerce currencyCode to coveoua
+  code: "givenScriptInitialized();\ngivenMockDataLayer({\n  \"event\": \"gtm.dom\"\
+    ,\n  \"ecommerce\": {\n     \"currencyCode\": \"EUR\" \n  }\n});\n\nconst mockData\
+    \ = {\n  \"eventType\": \"view\"\n};\n\nrunCode(mockData);\n\nassertApi('gtmOnSuccess').wasCalled();\n\
+    assertActionWasQueued([\"set\", \"currencyCode\", \"EUR\"]);\nassertEventWasSentWith(\"\
+    pageview\");"
+setup: "const assertActionWasQueued = (event) => {\n   const createArgumentsQueue\
+  \ = require('createArgumentsQueue');\n   const coveoua = createArgumentsQueue('coveoua',\
+  \ 'coveoua.q');\n\n   assertThat(coveoua.q).contains(event);\n};\n\nconst givenScriptInitialized\
+  \ = () => {\n  const mockData = {\n    \"eventType\": \"load\",\n    \"apiKey\"\
+  : \"1234-this-is-an-api-key\",\n    \"analyticsEndpoint\": \"https://somefakeendpoint\"\
+  ,\n  };\n  \n  let initialized = false;\n  mock('injectScript', function(url, onSuccess,\
+  \ onFailure) {\n    onSuccess();\n    initialized = true;\n  });\n  mock('copyFromWindow',\
+  \ function(name) {\n    if (name === \"coveoanalytics\") {\n      return initialized\
+  \ ? {} : null; \n    }\n  });\n\n  runCode(mockData);\n  \n  assertApi('injectScript').wasCalled();\n\
+  \  assertApi('gtmOnSuccess').wasCalled();\n  assertActionWasQueued([\"init\", mockData.apiKey,\
+  \ mockData.analyticsEndpoint]);\n};\n\nconst givenMockDataLayer = (fakeDataLayer)\
+  \ => { \n   mock('copyFromDataLayer', (name) => {\n     return fakeDataLayer[name];\n\
+  \   });\n};\n \n\nconst assertEventWasSentWith = (event, data) => {\n   assertActionWasQueued(data\
+  \ ? [\"send\", event, data] : [\"send\", event]);\n};"
 
 
 ___NOTES___
