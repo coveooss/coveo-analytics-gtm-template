@@ -437,9 +437,9 @@ const loadCoveoAnalyticsScript = (onSuccess) => {
 
 const loadCoveoAnalyticsScriptIfNotLoaded = (onSuccess, onFailure) => {
   const copyFromWindow = require("copyFromWindow");
-  const coveoanalytics = copyFromWindow("coveoanalytics");
+  const isLoaded = copyFromWindow("coveoua");
 
-  if (!coveoanalytics) {
+  if (!isLoaded) {
     if (!validateVariablesToLoadScript()) {
       onFailure();
     }
@@ -549,7 +549,11 @@ const logWithMeasurementProtocol = () => {
       "removeFromCart": ["remove"],
       "checkout": ["checkout"],
       "checkoutOption": ["checkout_option"],
-      "productClick": ["click"]
+      "productClick": ["click"],
+      // Custom event type, in case you want to send them after "gtm.load" or "gtm.dom".
+      "refund": ["refund"],
+      "purchase": ["purchase"],
+      "detailView": ["detail"]
     };
 
     const eventsToTest = eventMapping[event];
@@ -557,10 +561,11 @@ const logWithMeasurementProtocol = () => {
     const ecommerceDataLayerToUse = eventsFoundForType.length > 0 && ecommerce[eventsFoundForType[0]];
 
     if (ecommerceDataLayerToUse) {
-      addAllImpressionsIfDefined(ecommerce.impressions);
       addAllProductsIfDefined(ecommerceDataLayerToUse.products);
       setAction(eventsFoundForType[0], ecommerceDataLayerToUse.actionField);
     }
+
+    addAllImpressionsIfDefined(ecommerce.impressions);
   }
 
   log('Coveo Using Measurement Protocol');
@@ -941,6 +946,7 @@ scenarios:
     runCode(mockData);
 
     assertApi('gtmOnFailure').wasCalled();
+    assertApi('gtmOnSuccess').wasNotCalled();
 - name: Sends a Page View event
   code: |-
     givenScriptInitialized();
@@ -955,15 +961,17 @@ scenarios:
 
     runCode(mockData);
 
+    assertApi('gtmOnFailure').wasNotCalled();
     assertApi('gtmOnSuccess').wasCalled();
     assertEventWasSentWith("pageview");
 - name: Adds Enhanced Commmerce Products with a Detail Page View event
   code: "const product = {\n   \"productName\": \"wow\" \n};\n\ngivenScriptInitialized();\n\
     \ngivenMockDataLayer({\n  \"event\": \"gtm.dom\",\n  \"ecommerce\": {\n  \t\"\
     detail\": {\n      \"products\": [product]\n    }\n  }\n});\n\nconst mockData\
-    \ = {\n  \"eventType\": \"view\"\n};\n\nrunCode(mockData);\n\nassertApi('gtmOnSuccess').wasCalled();\n\
-    assertActionWasQueued([\"ec:setAction\", \"detail\"]);\nassertActionWasQueued([\"\
-    ec:addProduct\", product]);\nassertEventWasSentWith(\"pageview\");"
+    \ = {\n  \"eventType\": \"view\"\n};\n\nrunCode(mockData);\n\nassertApi('gtmOnFailure').wasNotCalled();\n\
+    assertApi('gtmOnSuccess').wasCalled();\nassertActionWasQueued([\"ec:setAction\"\
+    , \"detail\"]);\nassertActionWasQueued([\"ec:addProduct\", product]);\nassertEventWasSentWith(\"\
+    pageview\");"
 - name: Allows sending a Page View without ecommerce in data layer
   code: |-
     givenScriptInitialized();
@@ -977,14 +985,15 @@ scenarios:
 
     runCode(mockData);
 
+    assertApi('gtmOnFailure').wasNotCalled();
     assertApi('gtmOnSuccess').wasCalled();
     assertEventWasSentWith("pageview");
 - name: Propagates the ECommerce currencyCode to coveoua
   code: "givenScriptInitialized();\ngivenMockDataLayer({\n  \"event\": \"gtm.dom\"\
     ,\n  \"ecommerce\": {\n     \"currencyCode\": \"EUR\" \n  }\n});\n\nconst mockData\
-    \ = {\n  \"eventType\": \"view\"\n};\n\nrunCode(mockData);\n\nassertApi('gtmOnSuccess').wasCalled();\n\
-    assertActionWasQueued([\"set\", \"currencyCode\", \"EUR\"]);\nassertEventWasSentWith(\"\
-    pageview\");"
+    \ = {\n  \"eventType\": \"view\"\n};\n\nrunCode(mockData);\n\nassertApi('gtmOnFailure').wasNotCalled();\n\
+    assertApi('gtmOnSuccess').wasCalled();\nassertActionWasQueued([\"set\", \"currencyCode\"\
+    , \"EUR\"]);\nassertEventWasSentWith(\"pageview\");"
 setup: "const assertActionWasQueued = (event) => {\n   const createArgumentsQueue\
   \ = require('createArgumentsQueue');\n   const coveoua = createArgumentsQueue('coveoua',\
   \ 'coveoua.q');\n\n   assertThat(coveoua.q).contains(event);\n};\n\nconst givenScriptInitialized\
@@ -992,8 +1001,8 @@ setup: "const assertActionWasQueued = (event) => {\n   const createArgumentsQueu
   : \"1234-this-is-an-api-key\",\n    \"analyticsEndpoint\": \"https://somefakeendpoint\"\
   ,\n  };\n  \n  let initialized = false;\n  mock('injectScript', function(url, onSuccess,\
   \ onFailure) {\n    onSuccess();\n    initialized = true;\n  });\n  mock('copyFromWindow',\
-  \ function(name) {\n    if (name === \"coveoanalytics\") {\n      return initialized\
-  \ ? {} : null; \n    }\n  });\n\n  runCode(mockData);\n  \n  assertApi('injectScript').wasCalled();\n\
+  \ function(name) {\n    if (name === \"coveoua\") {\n      return initialized ?\
+  \ {} : null; \n    }\n  });\n\n  runCode(mockData);\n  \n  assertApi('injectScript').wasCalled();\n\
   \  assertApi('gtmOnSuccess').wasCalled();\n  assertActionWasQueued([\"init\", mockData.apiKey,\
   \ mockData.analyticsEndpoint]);\n};\n\nconst givenMockDataLayer = (fakeDataLayer)\
   \ => { \n   mock('copyFromDataLayer', (name) => {\n     return fakeDataLayer[name];\n\
