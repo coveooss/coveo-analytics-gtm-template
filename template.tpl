@@ -1,4 +1,4 @@
-﻿___TERMS_OF_SERVICE___
+___TERMS_OF_SERVICE___
 
 By creating or modifying this file you agree to Google Tag Manager's Community
 Template Gallery Developer Terms of Service available at
@@ -553,7 +553,12 @@ const logWithMeasurementProtocol = () => {
       // Custom event type, in case you want to send them after "gtm.load" or "gtm.dom".
       "refund": ["refund"],
       "purchase": ["purchase"],
-      "detailView": ["detail"]
+      "detailView": ["detail"],
+      "impression": ["impression", "impressions"]
+    };
+
+    const customCoveoActionsOverride = {
+      "impressions": "impression"
     };
 
     const eventsToTest = eventMapping[event];
@@ -562,7 +567,9 @@ const logWithMeasurementProtocol = () => {
 
     if (ecommerceDataLayerToUse) {
       addAllProductsIfDefined(ecommerceDataLayerToUse.products);
-      setAction(eventsFoundForType[0], ecommerceDataLayerToUse.actionField);
+      addAllImpressionsIfDefined(ecommerceDataLayerToUse.impressions);
+      const action = eventsFoundForType[0];
+      setAction(customCoveoActionsOverride[action] || action, ecommerceDataLayerToUse.actionField);
     }
 
     addAllImpressionsIfDefined(ecommerce.impressions);
@@ -994,6 +1001,15 @@ scenarios:
     \ = {\n  \"eventType\": \"view\"\n};\n\nrunCode(mockData);\n\nassertApi('gtmOnFailure').wasNotCalled();\n\
     assertApi('gtmOnSuccess').wasCalled();\nassertActionWasQueued([\"set\", \"currencyCode\"\
     , \"EUR\"]);\nassertEventWasSentWith(\"pageview\");"
+- name: Should allow sending a Custom Coveo impression event
+  code: "const product = {\n   \"productName\": \"wow\" \n};\n\ngivenScriptInitialized();\n\
+    \ngivenMockDataLayer({\n  \"event\": \"impression\",\n  \"ecommerce\": {\n  \t\
+    \"impression\": {\n      \"impressions\": [product],\n      \"actionField\": {\
+    \ \"list\": \"coveo:search:1234\" },\n    }\n  }\n});\n\nconst mockData = {\n\
+    \  \"eventType\": \"event\"\n};\n\nrunCode(mockData);\n\nassertApi('gtmOnFailure').wasNotCalled();\n\
+    assertApi('gtmOnSuccess').wasCalled();\nassertActionWasQueued([\"ec:setAction\"\
+    , \"impression\", { \"list\": \"coveo:search:1234\" }]);\nassertActionWasQueued([\"\
+    ec:addImpression\", product]);\nassertEventWasSentWith(\"event\");"
 setup: "const assertActionWasQueued = (event) => {\n   const createArgumentsQueue\
   \ = require('createArgumentsQueue');\n   const coveoua = createArgumentsQueue('coveoua',\
   \ 'coveoua.q');\n\n   assertThat(coveoua.q).contains(event);\n};\n\nconst givenScriptInitialized\
