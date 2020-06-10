@@ -351,11 +351,11 @@ ___TEMPLATE_PARAMETERS___
         "selectItems": [
           {
             "displayValue": "Coveo Cloud",
-            "value": "https://usageanalytics.coveo.com/"
+            "value": "https://platform.cloud.coveo.com/rest/ua"
           },
           {
             "displayValue": "Coveo Cloud (HIPAA)",
-            "value": "http://usageanalyticshipaa.cloud.coveo.com/"
+            "value": "https://platformhipaa.cloud.coveo.com/rest/ua"
           }
         ],
         "valueValidators": [],
