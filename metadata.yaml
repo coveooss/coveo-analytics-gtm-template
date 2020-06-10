@@ -1,6 +1,13 @@
 homepage: "www.coveo.com",
 documentation: "https://docs.coveo.com/en/2926",
 versions:
+  - sha: 69457e36d75ec0aca811e54bd8d83178dd8572ff
+    changeNotes: |2
+      Bump coveo.analytics script to version 2.
+      Automatically leverage the data layer.
+      Allow sending only impressions.
+      Update default endpoints.
+      Fix timing issue during initialization.
   - sha: 389d18e41e2117af48d280373312f4637e038619
     changeNotes: Removed universal tracker support
   - sha: 1f9dceb584226f704e864c3c03f97748739969ca
