@@ -1,6 +1,8 @@
 homepage: "www.coveo.com",
 documentation: "https://docs.coveo.com/en/2926",
 versions:
+  - sha: 0aa06f471618a668ee9a5bb8ed633423f6e8b829
+    changeNotes: Updated logo for the new Coveo brand
   - sha: 69457e36d75ec0aca811e54bd8d83178dd8572ff
     changeNotes: |2
       Bump coveo.analytics script to version 2.
