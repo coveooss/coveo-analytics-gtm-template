@@ -1,6 +1,8 @@
 homepage: "www.coveo.com",
 documentation: "https://docs.coveo.com/en/2926",
 versions:
+  - sha: 36f001b563cb436a83034b61a62c43256109d45c
+    changeNotes: Allow overriding values in view and event
   - sha: 0aa06f471618a668ee9a5bb8ed633423f6e8b829
     changeNotes: Updated logo for the new Coveo brand
   - sha: 69457e36d75ec0aca811e54bd8d83178dd8572ff
