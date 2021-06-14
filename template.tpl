@@ -1,4 +1,4 @@
-___TERMS_OF_SERVICE___
+﻿___TERMS_OF_SERVICE___
 
 By creating or modifying this file you agree to Google Tag Manager's Community
 Template Gallery Developer Terms of Service available at
@@ -227,11 +227,21 @@ ___TEMPLATE_PARAMETERS___
         "paramName": "eventType",
         "type": "EQUALS",
         "paramValue": "custom"
+      },
+      {
+        "paramName": "eventType",
+        "paramValue": "view",
+        "type": "EQUALS"
+      },
+      {
+        "paramName": "eventType",
+        "paramValue": "event",
+        "type": "EQUALS"
       }
     ],
     "displayName": "Custom metadata (leverageable by Coveo ML and in Coveo UA reports)",
     "name": "Custom Data",
-    "groupStyle": "ZIPPY_OPEN",
+    "groupStyle": "ZIPPY_CLOSED",
     "type": "GROUP",
     "subParams": [
       {
@@ -259,26 +269,6 @@ ___TEMPLATE_PARAMETERS___
             "displayName": "Value",
             "name": "value",
             "type": "TEXT"
-          },
-          {
-            "selectItems": [
-              {
-                "displayValue": "Coveo UA reporting",
-                "value": "usageanalytics"
-              },
-              {
-                "displayValue": "Coveo ML context",
-                "value": "ml"
-              },
-              {
-                "displayValue": "All",
-                "value": "all"
-              }
-            ],
-            "defaultValue": "usageanalytics",
-            "displayName": "Purpose",
-            "name": "purpose",
-            "type": "SELECT"
           }
         ],
         "type": "SIMPLE_TABLE"
@@ -294,26 +284,6 @@ ___TEMPLATE_PARAMETERS___
             "help": "A JavaScript object to merge with the other specified custom metadata.",
             "displayName": "Object to merge",
             "name": "object",
-            "type": "SELECT"
-          },
-          {
-            "selectItems": [
-              {
-                "displayValue": "Usage Analytics Reporting",
-                "value": "usageanalytics"
-              },
-              {
-                "displayValue": "Machine Learning Context",
-                "value": "ml"
-              },
-              {
-                "displayValue": "Both",
-                "value": "all"
-              }
-            ],
-            "defaultValue": "usageanalytics",
-            "displayName": "Purpose",
-            "name": "purpose",
             "type": "SELECT"
           }
         ],
@@ -461,21 +431,16 @@ const addToObject = function(obj) {
   return obj;
 };
 
-const generateCustomData = () => {
-  const ensureObjectHasContextPrefix = (obj) => {
-    const contextPrefix = "context_";
-    const newObj = {};
-    for (let key in obj) {
-      const newKey = key.indexOf(contextPrefix) === 0 ? key : contextPrefix + key;
-      newObj[newKey] = obj[key];
+const isObjectEmpty = function(obj) {
+  for (let key in obj) {
+    if (obj.hasOwnProperty(key)) {
+      return false;
     }
-    return newObj;
-  };
+  }
+  return true;
+};
 
-  const rowIsForAll = (obj) => obj.purpose === 'all';
-  const rowIsForUA = (obj) => obj.purpose === 'usageanalytics' || rowIsForAll(obj);
-  const rowIsForML = (obj) => obj.purpose === 'ml' || rowIsForAll(obj);
-
+const generateCustomData = () => {
   const customDataObject = {};
 
   if (!!data.customDataTable && data.customDataTable.length > 0) {
@@ -484,13 +449,9 @@ const generateCustomData = () => {
       return table ? makeTableMap(table, 'key', 'value') : {};
     };
 
-    const objForUsageAnalytics = makeSafeTableMap(data.customDataTable.filter(rowIsForUA));
-    const objForContext = ensureObjectHasContextPrefix(
-      makeSafeTableMap(data.customDataTable.filter(rowIsForML))
-    );
+    const objForUsageAnalytics = makeSafeTableMap(data.customDataTable);
     addToObject(customDataObject,
-                objForUsageAnalytics,
-                objForContext);
+                objForUsageAnalytics);
   }
 
   if (!!data.customDataObjects && data.customDataObjects.length > 0) {
@@ -498,10 +459,7 @@ const generateCustomData = () => {
       return objects.map(row => row.object).filter(obj => typeof obj === 'object');
     };
 
-    getValidCustomDataObjectsFromArray(data.customDataObjects.filter(rowIsForUA))
-      .forEach(obj => addToObject(customDataObject, obj));
-    getValidCustomDataObjectsFromArray(data.customDataObjects.filter(rowIsForML))
-      .map(ensureObjectHasContextPrefix)
+    getValidCustomDataObjectsFromArray(data.customDataObjects)
       .forEach(obj => addToObject(customDataObject, obj));
   }
 
@@ -577,7 +535,12 @@ const logWithMeasurementProtocol = () => {
 
   log('Coveo Using Measurement Protocol');
 
-  coveoua("send", measurementProtocolTypeMap[data.eventType]);
+  const customData = generateCustomData();
+  if (isObjectEmpty(customData)) {
+    coveoua("send", measurementProtocolTypeMap[data.eventType]);
+  } else {
+    coveoua("send", measurementProtocolTypeMap[data.eventType], customData);
+  }
 };
 
 const logCoveoAnalyticsEvent = () => {
@@ -638,6 +601,9 @@ ___WEB_PERMISSIONS___
           }
         }
       ]
+    },
+    "clientAnnotations": {
+      "isEditedByUser": true
     },
     "isRequired": true
   },
@@ -880,6 +846,9 @@ ___WEB_PERMISSIONS___
         }
       ]
     },
+    "clientAnnotations": {
+      "isEditedByUser": true
+    },
     "isRequired": true
   },
   {
@@ -1001,6 +970,16 @@ scenarios:
     \ = {\n  \"eventType\": \"view\"\n};\n\nrunCode(mockData);\n\nassertApi('gtmOnFailure').wasNotCalled();\n\
     assertApi('gtmOnSuccess').wasCalled();\nassertActionWasQueued([\"set\", \"currencyCode\"\
     , \"EUR\"]);\nassertEventWasSentWith(\"pageview\");"
+- name: Adds Impressions with a addToCart event
+  code: "const product = {\n   \"productName\": \"wow\" \n};\n\nconst impression =\
+    \ {\n   \"productName\": \"impression\" \n};\n\ngivenScriptInitialized();\n\n\
+    givenMockDataLayer({\n  \"event\": \"addToCart\",\n  \"ecommerce\": {\n  \t\"\
+    add\": {\n      \"products\": [product]\n    },\n    \"impressions\": [impression]\n\
+    \  }\n});\n\nconst mockData = {\n  \"eventType\": \"event\"\n};\n\nrunCode(mockData);\n\
+    \nassertApi('gtmOnFailure').wasNotCalled();\nassertApi('gtmOnSuccess').wasCalled();\n\
+    assertActionWasQueued([\"ec:setAction\", \"add\"]);\nassertActionWasQueued([\"\
+    ec:addProduct\", product]);\nassertActionWasQueued([\"ec:addImpression\", impression]);\n\
+    assertEventWasSentWith(\"event\");"
 - name: Should allow sending a Custom Coveo impression event
   code: "const product = {\n   \"productName\": \"wow\" \n};\n\ngivenScriptInitialized();\n\
     \ngivenMockDataLayer({\n  \"event\": \"impression\",\n  \"ecommerce\": {\n  \t\
@@ -1010,9 +989,40 @@ scenarios:
     assertApi('gtmOnSuccess').wasCalled();\nassertActionWasQueued([\"ec:setAction\"\
     , \"impression\", { \"list\": \"coveo:search:1234\" }]);\nassertActionWasQueued([\"\
     ec:addImpression\", product]);\nassertEventWasSentWith(\"event\");"
+
+- name: Sends a Page View event with custom data
+  code: |-
+    givenScriptInitialized();
+    givenMockDataLayer({
+      "event": "gtm.dom",
+      "ecommerce": {}
+    });
+
+    runCode({
+      "eventType": "view",
+      "customDataObjects": [{
+        "object": {
+          "customA": "valueA",
+        }
+      }],
+      "customDataTable": [{"key": "customB", "value": "valueB"}]
+    });
+
+    assertApi('gtmOnFailure').wasNotCalled();
+    assertApi('gtmOnSuccess').wasCalled();
+    assertSendWasQueued("pageview", {
+      "customA": "valueA",
+      "customB": "valueB"
+    });
 setup: "const assertActionWasQueued = (event) => {\n   const createArgumentsQueue\
   \ = require('createArgumentsQueue');\n   const coveoua = createArgumentsQueue('coveoua',\
-  \ 'coveoua.q');\n\n   assertThat(coveoua.q).contains(event);\n};\n\nconst givenScriptInitialized\
+  \ 'coveoua.q');\n\n   assertThat(coveoua.q).contains(event);\n};\n\nconst assertSendWasQueued\
+  \ = (type, data) => {\n   const createArgumentsQueue = require('createArgumentsQueue');\n\
+  \   const coveoua = createArgumentsQueue('coveoua', 'coveoua.q');\n  \n   assertThat(coveoua.q.length).isGreaterThan(0);\n\
+  \   const eventsData = coveoua.q.filter(e => e[0] === \"send\" && e[1] === type).map(e\
+  \ => e[2]);\n  \n  const logToConsole = require('logToConsole');\n   logToConsole(eventsData);\n\
+  \  \n   if (data) {\n      assertThat(eventsData).contains(data);\n   } else {\n\
+  \      assertThat(eventsData.length).isGreaterThan(0); \n   }\n};\n\nconst givenScriptInitialized\
   \ = () => {\n  const mockData = {\n    \"eventType\": \"load\",\n    \"apiKey\"\
   : \"1234-this-is-an-api-key\",\n    \"analyticsEndpoint\": \"https://somefakeendpoint\"\
   ,\n  };\n  \n  let initialized = false;\n  mock('injectScript', function(url, onSuccess,\
