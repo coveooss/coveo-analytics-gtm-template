@@ -38,10 +38,6 @@ ___TEMPLATE_PARAMETERS___
     "macrosInSelect": false,
     "selectItems": [
       {
-        "displayValue": "Send custom Coveo event",
-        "value": "custom"
-      },
-      {
         "displayValue": "Send page view",
         "value": "view"
       },
@@ -52,6 +48,10 @@ ___TEMPLATE_PARAMETERS___
       {
         "displayValue": "Initialize the Coveo Analytics script",
         "value": "load"
+      },
+      {
+        "value": "custom",
+        "displayValue": "Send event (legacy custom events)"
       }
     ],
     "displayName": "Action",
@@ -72,7 +72,7 @@ ___TEMPLATE_PARAMETERS___
             "paramValue": "custom"
           }
         ],
-        "displayName": "Custom events can be leveraged in Coveo UA reports and by Coveo ML Event Recommendation models.",
+        "displayName": "This type of event is deprecated, use Send Event and Send Page View instead.",
         "name": "Custom Coveo Event Type Description",
         "type": "LABEL"
       },
@@ -239,7 +239,7 @@ ___TEMPLATE_PARAMETERS___
         "type": "EQUALS"
       }
     ],
-    "displayName": "Custom metadata (leverageable by Coveo ML and in Coveo UA reports)",
+    "displayName": "Override Metadata",
     "name": "Custom Data",
     "groupStyle": "ZIPPY_CLOSED",
     "type": "GROUP",
@@ -321,11 +321,11 @@ ___TEMPLATE_PARAMETERS___
         "selectItems": [
           {
             "displayValue": "Coveo Cloud",
-            "value": "https://platform.cloud.coveo.com/rest/ua"
+            "value": "https://analytics.cloud.coveo.com/rest/ua"
           },
           {
             "displayValue": "Coveo Cloud (HIPAA)",
-            "value": "https://platformhipaa.cloud.coveo.com/rest/ua"
+            "value": "https://analyticshipaa.cloud.coveo.com/rest/ua"
           }
         ],
         "valueValidators": [],
@@ -367,7 +367,13 @@ ___TEMPLATE_PARAMETERS___
 ___SANDBOXED_JS_FOR_WEB_TEMPLATE___
 
 const log = require('logToConsole');
+const JSON = require('JSON');
 const isLoadEventType = () => data.eventType === "load";
+
+const isSomewhatAJSON = (value) => typeof value === 'string' && value.indexOf("{") !== -1 && value.indexOf("}") !== -1;
+const getAsJSONOrValue = (value) => {
+  return (isSomewhatAJSON(value) && JSON.parse(value)) || value;
+};
 
 const validateVariablesToLoadScript = () => {
   const COMMON_ERROR_MESSAGE = "Coveo Analytics Script could not be initialized.\n";
@@ -444,19 +450,20 @@ const generateCustomData = () => {
   const customDataObject = {};
 
   if (!!data.customDataTable && data.customDataTable.length > 0) {
-    const makeSafeTableMap = (table) => {
+    const makeParsedTableMap = (table) => {
       const makeTableMap = require('makeTableMap');
-      return table ? makeTableMap(table, 'key', 'value') : {};
+      const tableWithParsedValues = table.map((row) => ({key: row.key, value: getAsJSONOrValue(row.value)}));
+      return makeTableMap(tableWithParsedValues, 'key', 'value');
     };
 
-    const objForUsageAnalytics = makeSafeTableMap(data.customDataTable);
+    const objForUsageAnalytics = makeParsedTableMap(data.customDataTable);
     addToObject(customDataObject,
                 objForUsageAnalytics);
   }
 
   if (!!data.customDataObjects && data.customDataObjects.length > 0) {
     const getValidCustomDataObjectsFromArray = (objects) => {
-      return objects.map(row => row.object).filter(obj => typeof obj === 'object');
+      return objects.map(row => row.object).map(getAsJSONOrValue).filter(obj => typeof obj === 'object');
     };
 
     getValidCustomDataObjectsFromArray(data.customDataObjects)
@@ -1013,6 +1020,30 @@ scenarios:
     assertSendWasQueued("pageview", {
       "customA": "valueA",
       "customB": "valueB"
+    });
+- name: Sends a Page View event with custom data as objects
+  code: |-
+    givenScriptInitialized();
+    givenMockDataLayer({
+      "event": "gtm.dom",
+      "ecommerce": {}
+    });
+
+    runCode({
+      "eventType": "view",
+      "customDataObjects": [{"object":"{\"customA\": {\"key\": \"value\"}}"}],
+      "customDataTable": [{"key": "customB", "value": "{\"key\": \"value\"}"}]
+    });
+
+    assertApi('gtmOnFailure').wasNotCalled();
+    assertApi('gtmOnSuccess').wasCalled();
+    assertSendWasQueued("pageview", {
+      "customA": {
+         "key": "value"
+      },
+      "customB": {
+         "key": "value"
+      }
     });
 setup: "const assertActionWasQueued = (event) => {\n   const createArgumentsQueue\
   \ = require('createArgumentsQueue');\n   const coveoua = createArgumentsQueue('coveoua',\
